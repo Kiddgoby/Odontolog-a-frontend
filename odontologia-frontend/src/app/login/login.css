@@ -1,93 +1,161 @@
+/* Reset básico */
+body {
+    background: #deeafb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fondo general */
 .login-wrapper {
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background: #e8f1ff;
+    padding: 20px;
 }
 
+/* Tarjeta */
 .login-card {
-    background: white;
-    padding: 40px 50px;
-    border-radius: 12px;
-    width: 380px;
+    background: #ffffff;
+    width: 100%;
+    max-width: 480px;
+    padding: 40px 35px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
 .logo img {
     width: 70px;
-    margin-bottom: 10px;
+    height: 70px;
+    object-fit: contain;
 }
 
+/* Títulos */
 h1 {
-    margin: 0;
-    font-size: 26px;
-    color: #1a4fa3;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e2a38;
+    margin-bottom: 8px;
 }
 
 .subtitle {
-    margin: 0 0 25px 0;
-    color: #4a4a4a;
-    font-size: 14px;
+    font-size: 16px;
+    color: #6b7a90;
+    margin-bottom: 30px;
 }
 
 h2 {
-    margin-top: 10px;
     font-size: 20px;
-    color: #1a1a1a;
+    text-align: left;
+    margin-bottom: 5px;
+    color: #1e2a38;
 }
 
 .description {
     font-size: 14px;
-    color: #666;
+    text-align: left;
+    color: #7c8a9f;
     margin-bottom: 25px;
 }
 
+/* Mensaje de error */
+.error-msg {
+    background-color: #fce8e6;
+    color: #d93025;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid #f5c6cb;
+}
+
+/* Formulario */
 form {
-    display: flex;
-    flex-direction: column;
     text-align: left;
 }
 
 label {
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #1e2a38;
     font-size: 14px;
-    margin-bottom: 5px;
-    color: #333;
 }
 
 input[type="email"],
 input[type="password"] {
-    padding: 10px;
-    border: 1px solid #c7d3e8;
-    border-radius: 6px;
-    margin-bottom: 15px;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #d9e0ea;
+    background-color: #f4f6f9;
     font-size: 14px;
+    transition: 0.3s ease;
 }
 
+input:focus {
+    outline: none;
+    border-color: #2d6cdf;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(45, 108, 223, 0.1);
+}
+
+/* Checkbox */
 .remember {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-top: 15px;
 }
 
+.remember input {
+    width: 16px;
+    height: 16px;
+}
+
+.remember label {
+    margin: 0;
+    font-weight: 500;
+    font-size: 14px;
+    color: #1e2a38;
+}
+
+/* Botón */
 button {
-    background: #1a4fa3;
-    color: white;
-    padding: 12px;
+    width: 100%;
+    margin-top: 25px;
+    padding: 14px;
+    border-radius: 12px;
     border: none;
-    border-radius: 6px;
+    background-color: #0b0f2a;
+    /* azul oscuro casi negro */
+    color: white;
     font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.2s;
-}
-
-button:disabled {
-    background: #8fa8d6;
-    cursor: not-allowed;
+    transition: 0.3s ease;
 }
 
 button:hover:not(:disabled) {
-    background: #163f82;
+    background-color: #1a1f4d;
+}
+
+button:disabled {
+    background-color: #9aa6b2;
+    cursor: not-allowed;
 }
