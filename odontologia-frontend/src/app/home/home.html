@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Panel Clínica Dental</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <div>
+                <h1>¡Bienvenido, Dr. Admin!</h1>
+                <span>jueves, 19 de febrero de 2026</span>
+            </div>
+        </header>
+
+        <section class="cards">
+            <div class="card">
+                <div class="card-title">Total Pacientes</div>
+                <div class="card-main">
+                    <div class="card-value">1,234</div>
+                    <div class="card-change positive">+12%</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Citas Hoy</div>
+                <div class="card-main">
+                    <div class="card-value">18</div>
+                    <div class="card-change positive">+3</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Citas Pendientes</div>
+                <div class="card-main">
+                    <div class="card-value">45</div>
+                    <div class="card-change negative">-5%</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Ingresos Mes</div>
+                <div class="card-main">
+                    <div class="card-value">$24,500</div>
+                    <div class="card-change positive">+18%</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <!-- Citas de hoy -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Citas de Hoy</div>
+                        <div class="panel-subtitle">Resumen de las citas programadas</div>
+                    </div>
+                    <span class="badge">18 citas</span>
+                </div>
+
+                <div class="appointments-list">
+                    <div class="appointment">
+                        <div class="appointment-time">09:00</div>
+                        <div class="appointment-main">
+                            <div class="appointment-name">María García</div>
+                            <div class="appointment-treatment">Limpieza dental</div>
+                            <div class="appointment-doctor">Dr. Rodríguez</div>
+                        </div>
+                        <div class="appointment-status status-confirmada">confirmada</div>
+                    </div>
+
+                    <div class="appointment">
+                        <div class="appointment-time">10:30</div>
+                        <div class="appointment-main">
+                            <div class="appointment-name">Carlos Fernández</div>
+                            <div class="appointment-treatment">Ortodoncia - Revisión</div>
+                            <div class="appointment-doctor">Dra. Martínez</div>
+                        </div>
+                        <div class="appointment-status status-confirmada">confirmada</div>
+                    </div>
+
+                    <div class="appointment">
+                        <div class="appointment-time">11:00</div>
+                        <div class="appointment-main">
+                            <div class="appointment-name">Ana López</div>
+                            <div class="appointment-treatment">Extracción</div>
+                            <div class="appointment-doctor">Dr. Rodríguez</div>
+                        </div>
+                        <div class="appointment-status status-pendiente">pendiente</div>
+                    </div>
+
+                    <div class="appointment">
+                        <div class="appointment-time">14:00</div>
+                        <div class="appointment-main">
+                            <div class="appointment-name">Juan Pérez</div>
+                            <div class="appointment-treatment">Implante dental</div>
+                            <div class="appointment-doctor">Dr. Sánchez</div>
+                        </div>
+                        <div class="appointment-status status-confirmada">confirmada</div>
+                    </div>
+
+                    <div class="appointment">
+                        <div class="appointment-time">15:30</div>
+                        <div class="appointment-main">
+                            <div class="appointment-name">Laura Ruiz</div>
+                            <div class="appointment-treatment">Blanqueamiento</div>
+                            <div class="appointment-doctor">Dra. Martínez</div>
+                        </div>
+                        <div class="appointment-status status-pendiente">pendiente</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tratamientos populares + recordatorio -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Tratamientos Populares</div>
+                        <div class="panel-subtitle">Distribución de tratamientos este mes</div>
+                    </div>
+                </div>
+
+                <div class="treatments-list">
+                    <div class="treatment-row">
+                        <span class="treatment-name">Limpieza dental</span>
+                        <div class="treatment-bar">
+                            <div class="treatment-fill fill-limpieza"></div>
+                        </div>
+                        <span>45%</span>
+                    </div>
+
+                    <div class="treatment-row">
+                        <span class="treatment-name">Ortodoncia</span>
+                        <div class="treatment-bar">
+                            <div class="treatment-fill fill-ortodoncia"></div>
+                        </div>
+                        <span>30%</span>
+                    </div>
+
+                    <div class="treatment-row">
+                        <span class="treatment-name">Blanqueamiento</span>
+                        <div class="treatment-bar">
+                            <div class="treatment-fill fill-blanqueamiento"></div>
+                        </div>
+                        <span>15%</span>
+                    </div>
+
+                    <div class="treatment-row">
+                        <span class="treatment-name">Implantes</span>
+                        <div class="treatment-bar">
+                            <div class="treatment-fill fill-implantes"></div>
+                        </div>
+                        <span>10%</span>
+                    </div>
+                </div>
+
+                <div class="reminder">
+                    <div class="reminder-title">Recordatorio</div>
+                    <div class="reminder-text">
+                        Tienes 3 pacientes pendientes de confirmar cita para esta semana.
+                    </div>
+                    <button>Revisar citas</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>
