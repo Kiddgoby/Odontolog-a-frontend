@@ -1,0 +1,45 @@
+<nav class="sidebar" [class.collapsed]="isCollapsed()">
+    <header>
+        <div class="logo-details">
+            <img src="logo.png" alt="Logo" class="logo-img">
+            <span class="logo_name">Odontologia</span>
+        </div>
+        <i class="icon bx" [class.bx-menu-alt-right]="isCollapsed()" [class.bx-menu]="!isCollapsed()" id="btn"
+            (click)="toggleMenu()"></i>
+    </header>
+
+    <ul class="menu">
+        <li routerLink="/home" routerLinkActive="active">
+            <i class="icon bx bx-grid-alt"></i>
+            <span class="link_name">Dashboard</span>
+        </li>
+
+        <li routerLink="/pacientes" routerLinkActive="active">
+            <i class="icon bx bx-user"></i>
+            <span class="link_name">Pacientes</span>
+        </li>
+
+        <li routerLink="/citas" routerLinkActive="active">
+            <i class="icon bx bx-time"></i>
+            <span class="link_name">Citas</span>
+        </li>
+
+        <li routerLink="/calendario" routerLinkActive="active">
+            <i class="icon bx bx-calendar"></i>
+            <span class="link_name">Calendario</span>
+        </li>
+
+        <li routerLink="/tratamientos" routerLinkActive="active">
+            <i class="icon bx bx-file"></i>
+            <span class="link_name">Tratamientos</span>
+        </li>
+    </ul>
+
+    <div class="profile">
+        <i class="icon bx bx-user-circle"></i>
+        <div class="profile-details">
+            <p class="name">Dr. Admin</p>
+            <p class="role">Administrador</p>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,128 @@
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    background-color: #1a1a2e;
+    color: white;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    border-right: 2px solid #333;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+.sidebar header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 50px;
+}
+
+.logo-details {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img {
+    width: 35px;
+    height: 35px;
+}
+
+.logo_name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#btn {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #ccc;
+}
+
+#btn:hover {
+    color: white;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.menu li {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.menu li:hover {
+    background-color: #2a2a40;
+}
+
+.menu li.active {
+    background-color: #4c4cff;
+}
+
+.menu li .icon {
+    font-size: 1.4rem;
+    margin-right: 15px;
+    min-width: 25px;
+}
+
+.link_name {
+    font-size: 1rem;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+    gap: 10px;
+}
+
+.profile .icon {
+    font-size: 2.5rem;
+    color: #ccc;
+}
+
+.profile-details p {
+    margin: 0;
+}
+
+.profile-details .name {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.profile-details .role {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.sidebar.collapsed .logo_name,
+.sidebar.collapsed .link_name,
+.sidebar.collapsed .profile-details {
+    display: none;
+}
+
+.sidebar.collapsed .logo-details,
+.sidebar.collapsed .menu li,
+.sidebar.collapsed .profile {
+    justify-content: center;
+}
+
+.sidebar.collapsed .menu li .icon {
+    margin-right: 0;
+}
