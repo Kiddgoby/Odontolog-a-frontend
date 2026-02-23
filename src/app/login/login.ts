@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
 
