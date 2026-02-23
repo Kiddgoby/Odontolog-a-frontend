@@ -45,8 +45,19 @@ export class Login {
 
     if (user) {
       console.log('Login correcto:', user.role);
-      alert('¡Acceso concedido! Bienvenido ' + user.role);
       localStorage.setItem('userRole', user.role);
+
+      alert('¡Login exitoso! Redirigiendo al Home...');
+
+      this.router.navigate(['/home']).then(navigated => {
+        if (navigated) {
+          console.log('Navegación al Home exitosa');
+        } else {
+          console.error('La navegación al Home falló');
+        }
+      }).catch(err => {
+        console.error('Error durante la navegación:', err);
+      });
     } else {
       console.error('Login incorrecto');
       this.errorMessage = 'Correo o contraseña incorrectos.';
