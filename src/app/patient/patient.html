@@ -1,0 +1,65 @@
+<div class="patients-container">
+  <div class="header">
+    <div class="title-section">
+      <h1>Pacientes</h1>
+      <p>Gestión de pacientes de la clínica</p>
+    </div>
+    <button class="btn-new" routerLink="/patients/new">
+      <span class="icon"><i class="fa-solid fa-plus"></i></span> Nuevo Paciente
+    </button>
+  </div>
+
+  <div class="search-section">
+    <div class="search-bar">
+      <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+      <input type="text" placeholder="Buscar por nombre, email o teléfono..." [(ngModel)]="searchText">
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Contacto</th>
+          <th>Última Visita</th>
+          <th>Próxima Cita</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let patient of filteredPatients">
+          <td>
+            <div class="patient-info">
+              <span class="patient-name">{{ patient.nombre }}</span>
+              <span class="patient-age">{{ patient.edad }} años</span>
+            </div>
+          </td>
+          <td>
+            <div class="contact-info">
+              <div class="contact-item">
+                <span class="contact-icon"><i class="fa-solid fa-phone"></i></span> {{ patient.phone }}
+              </div>
+              <div class="contact-item">
+                <span class="contact-icon"><i class="fa-solid fa-envelope"></i></span> {{ patient.email }}
+              </div>
+            </div>
+          </td>
+          <td>{{ patient.ultimaVisita }}</td>
+          <td>{{ patient.proximaCita }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="patient.estado">
+              {{ patient.estado }}
+            </span>
+          </td>
+          <td>
+            <a [routerLink]="['/patients', patient.id]" class="view-details">
+              <span class="view-icon"><i class="fa-solid fa-eye"></i></span> Ver detalles
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
