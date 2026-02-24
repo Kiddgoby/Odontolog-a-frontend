@@ -1,0 +1,24 @@
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* El contenido principal se ajusta al espacio restante */
+.content {
+    flex-grow: 1;
+    height: 100vh;
+    background-color: #f0f2f5;
+    padding: 25px;
+    overflow-y: auto;
+}
+
+/* Estilo especial cuando el login está activo (sin menú) */
+.app-container.no-menu {
+    display: block;
+}
+
+.app-container.no-menu .content {
+    padding: 0;
+    width: 100%;
+}
