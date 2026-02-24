@@ -1,0 +1,111 @@
+<div class="patient-detail-container" *ngIf="patient">
+  <!-- Header -->
+  <div class="header">
+    <div class="top-nav">
+      <a routerLink="/patients" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i> Volver a pacientes
+      </a>
+    </div>
+    <div class="header-main">
+      <div class="patient-title">
+        <h1>{{ patient.nombre }}</h1>
+        <p>{{ patient.edad }} años</p>
+      </div>
+      <button class="btn-edit">Editar Paciente</button>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Información Personal -->
+      <div class="card info-card">
+        <h3>Información Personal</h3>
+        <div class="info-list">
+          <div class="info-item">
+            <i class="fa-solid fa-phone"></i> {{ patient.phone }}
+          </div>
+          <div class="info-item">
+            <i class="fa-solid fa-envelope"></i> {{ patient.email }}
+          </div>
+          <div class="info-item">
+            <i class="fa-solid fa-location-dot"></i> {{ patient.address }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Información Médica -->
+      <div class="card info-card">
+        <h3>Información Médica</h3>
+        <div class="medical-grid">
+          <div class="medical-item">
+            <label>Alergias</label>
+            <p>{{ patient.medication_allergies }}</p>
+          </div>
+          <div class="medical-item">
+            <label>Seguro</label>
+            <p>{{ patient.billing_data }}</p>
+          </div>
+          <div class="medical-item">
+            <label>Estado de Salud</label>
+            <p>{{ patient.health_status }}</p>
+          </div>
+          <div class="medical-item">
+            <label>Historial familiar</label>
+            <p>{{ patient.family_history }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-area">
+      <!-- Próximas Citas -->
+      <div class="card main-card">
+        <div class="card-header">
+          <h3>Próximas Citas</h3>
+          <a href="#" class="action-link">Nueva cita</a>
+        </div>
+        <div class="appointments-list" *ngIf="patient.citas">
+          <div class="appointment-item" *ngFor="let cita of patient.citas">
+            <div class="appointment-icon">
+              <i class="fa-regular fa-calendar"></i>
+            </div>
+            <div class="appointment-details">
+              <h4>{{ cita.titulo }}</h4>
+              <p>{{ cita.fecha }} a las {{ cita.hora }}</p>
+              <span class="doctor">{{ cita.doctor }}</span>
+            </div>
+            <div class="status-badge" [ngClass]="cita.estado">
+              {{ cita.estado }}
+            </div>
+          </div>
+          <p class="no-data" *ngIf="patient.citas.length === 0">No hay citas programadas.</p>
+        </div>
+      </div>
+
+      <!-- Historial de Tratamientos -->
+      <div class="card main-card">
+        <div class="card-header">
+          <h3>Historial de Tratamientos</h3>
+        </div>
+        <div class="treatments-list" *ngIf="patient.tratamientos">
+          <div class="treatment-item" *ngFor="let t of patient.tratamientos">
+            <div class="treatment-icon">
+              <i class="fa-regular fa-file-lines"></i>
+            </div>
+            <div class="treatment-info">
+              <div class="treatment-title-row">
+                <h4>{{ t.titulo }}</h4>
+                <span class="price">€{{ t.precio }}</span>
+              </div>
+              <p class="meta">{{ t.fecha }} • {{ t.doctor }}</p>
+              <p class="description">{{ t.descripcion }}</p>
+            </div>
+          </div>
+          <p class="no-data" *ngIf="patient.tratamientos.length === 0">No hay tratamientos registrados.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

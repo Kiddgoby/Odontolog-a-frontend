@@ -1,0 +1,138 @@
+<div class="new-patient-container">
+  <div class="header">
+    <div class="top-nav">
+      <a routerLink="/patients" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i> Volver a pacientes
+      </a>
+    </div>
+    <h1>Nuevo Registro de Paciente</h1>
+    <p>Complete la información detallada para el alta en el sistema.</p>
+  </div>
+
+  <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="registration-form">
+
+    <!-- Personal Information Section -->
+    <div class="form-section card">
+      <div class="section-title">
+        <i class="fa-solid fa-user"></i>
+        <h3>Información Personal</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="first_name">Nombre</label>
+          <input type="text" id="first_name" formControlName="first_name" placeholder="Ej: María">
+          <div class="error-msg"
+            *ngIf="patientForm.get('first_name')?.touched && patientForm.get('first_name')?.invalid">
+            El nombre es obligatorio (mín. 2 caracteres).
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="last_name">Apellidos</label>
+          <input type="text" id="last_name" formControlName="last_name" placeholder="Ej: García López">
+          <div class="error-msg" *ngIf="patientForm.get('last_name')?.touched && patientForm.get('last_name')?.invalid">
+            Los apellidos son obligatorios.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="national_id">DNI / NIE</label>
+          <input type="text" id="national_id" formControlName="national_id" placeholder="12345678X">
+          <div class="error-msg"
+            *ngIf="patientForm.get('national_id')?.touched && patientForm.get('national_id')?.invalid">
+            El DNI es obligatorio.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="social_security_number">Nº Seguridad Social</label>
+          <input type="text" id="social_security_number" formControlName="social_security_number"
+            placeholder="Opcional">
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Teléfono</label>
+          <input type="tel" id="phone" formControlName="phone" placeholder="+34 600 000 000">
+          <div class="error-msg" *ngIf="patientForm.get('phone')?.touched && patientForm.get('phone')?.invalid">
+            El teléfono es obligatorio.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" formControlName="email" placeholder="ejemplo@correo.com">
+          <div class="error-msg" *ngIf="patientForm.get('email')?.touched && patientForm.get('email')?.invalid">
+            Introduce un email válido.
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="address">Dirección Completa</label>
+          <input type="text" id="address" formControlName="address" placeholder="Calle, Número, Piso, Ciudad">
+          <div class="error-msg" *ngIf="patientForm.get('address')?.touched && patientForm.get('address')?.invalid">
+            La dirección es obligatoria.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Medical & Lifestyle Section -->
+    <div class="form-section card">
+      <div class="section-title">
+        <i class="fa-solid fa-stethoscope"></i>
+        <h3>Información Médica y Hábitos</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="medication_allergies">Alergias y Medicación</label>
+          <textarea id="medication_allergies" formControlName="medication_allergies"
+            placeholder="Detalle alergias a medicamentos..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="health_status">Estado de Salud General</label>
+          <textarea id="health_status" formControlName="health_status"
+            placeholder="Patologías previas, cirugías..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="family_history">Historial Familiar</label>
+          <textarea id="family_history" formControlName="family_history"
+            placeholder="Antecedentes médicos relevantes..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="lifestyle_habits">Hábitos de Vida</label>
+          <textarea id="lifestyle_habits" formControlName="lifestyle_habits"
+            placeholder="Fumador, higiene dental, dieta..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Billing Section -->
+    <div class="form-section card">
+      <div class="section-title">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+        <h3>Datos de Facturación / Seguro</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="billing_data">Información de Facturación</label>
+          <input type="text" id="billing_data" formControlName="billing_data"
+            placeholder="Compañía de seguro o datos fiscales">
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" routerLink="/patients" class="btn-cancel">Cancelar</button>
+      <button type="submit" class="btn-submit">
+        <i class="fa-solid fa-save"></i> Guardar Paciente
+      </button>
+    </div>
+  </form>
+</div>
