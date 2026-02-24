@@ -11,9 +11,9 @@ export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'home', component: HomeComponent },
-    { path: 'patients', component: Patient },
-    { path: 'patients/new', component: NewPatient },
-    { path: 'patients/:id', component: PacienteDetail },
+    { path: 'patient', component: Patient },
+    { path: 'patient/new', component: NewPatient },
+    { path: 'patient/:id', component: PacienteDetail },
     { path: 'tratamientos', component: Tratamientos }
 
 ];
