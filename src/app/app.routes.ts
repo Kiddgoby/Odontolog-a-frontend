@@ -6,6 +6,8 @@ import { NewPatient } from './new-patient/new-patient';
 import { PacienteDetail } from './paciente-detail/paciente-detail';
 
 import { Tratamientos } from './tratamientos/tratamientos';
+import { Citas } from './citas/citas';
+import { Calendario } from './calendario/calendario';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -14,6 +16,7 @@ export const routes: Routes = [
     { path: 'patient', component: Patient },
     { path: 'patient/new', component: NewPatient },
     { path: 'patient/:id', component: PacienteDetail },
-    { path: 'tratamientos', component: Tratamientos }
-
+    { path: 'tratamientos', component: Tratamientos },
+    { path: 'citas', component: Citas },
+    { path: 'calendario', component: Calendario }
 ];

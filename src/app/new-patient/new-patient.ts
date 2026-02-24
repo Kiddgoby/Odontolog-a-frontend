@@ -47,7 +47,7 @@ export class NewPatient implements OnInit {
   onSubmit(): void {
     if (this.patientForm.valid) {
       this.patientService.addPatient(this.patientForm.value);
-      this.router.navigate(['/patients']);
+      this.router.navigate(['/patient']);
     } else {
       this.markFormGroupTouched(this.patientForm);
     }
