@@ -1,0 +1,123 @@
+<div class="appointments-container">
+  <div class="header">
+    <div class="title-section">
+      <h1>Citas</h1>
+      <p>Gestión de citas y agenda</p>
+    </div>
+    <button class="btn-new" (click)="openNewAppointmentModal()">
+      <span class="icon"><i class="fa-solid fa-plus"></i></span> Nueva Cita
+    </button>
+  </div>
+
+  <div class="search-filter-section">
+    <div class="search-bar">
+      <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+      <input type="text" placeholder="Buscar por paciente o tratamiento..." [(ngModel)]="searchText">
+    </div>
+    <div class="filter-group">
+      <button *ngFor="let filter of ['Todas', 'Confirmadas', 'Pendientes', 'Completadas']"
+        [class.active]="currentFilter === filter" (click)="setFilter(filter)">
+        {{ filter }}
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Paciente</th>
+          <th>Tratamiento</th>
+          <th>Doctor</th>
+          <th>Duración</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let app of filteredAppointments" (click)="openPopup(app)">
+          <td>
+            <div class="date-time">
+              <span class="date-icon"><i class="fa-regular fa-calendar"></i></span>
+              <div class="time-details">
+                <span class="date">{{ app.fecha }}</span>
+                <span class="time"><i class="fa-regular fa-clock"></i> {{ app.hora }}</span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="patient-info">
+              <span class="patient-icon"><i class="fa-regular fa-user"></i></span>
+              <span class="patient-name">{{ app.paciente }}</span>
+            </div>
+          </td>
+          <td>{{ app.tratamiento }}</td>
+          <td>{{ app.doctor }}</td>
+          <td>{{ app.duracion }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="app.estado">
+              {{ app.estado }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit Popup -->
+  <div class="modal-overlay" *ngIf="isPopupOpen" (click)="closePopup()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Editar Cita</h3>
+        <button class="close-btn" (click)="closePopup()">&times;</button>
+      </div>
+      <div class="modal-body" *ngIf="selectedAppointment">
+        <div class="appointment-summary">
+          <p><strong>Paciente:</strong> {{ selectedAppointment.paciente }}</p>
+          <p><strong>Tratamiento:</strong> {{ selectedAppointment.tratamiento }}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Hora de inicio:</label>
+          <input type="time" [(ngModel)]="newTime">
+        </div>
+
+        <div class="form-group">
+          <label>¿Ha asistido?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" name="asistencia" value="sí" [(ngModel)]="asistencia">
+              <span>Sí</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="asistencia" value="no" [(ngModel)]="asistencia">
+              <span>No</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="asistencia" value="pendiente" [(ngModel)]="asistencia">
+              <span>Pendiente</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="actions-group">
+          <button class="btn-primary" (click)="saveChanges()">Guardar Cambios</button>
+          <button class="btn-complete" (click)="updateStatus('completada')">
+            <i class="fa-solid fa-check"></i> Marcar como Completada
+          </button>
+          <button class="btn-delete" (click)="markAsAbsent()">
+            <i class="fa-solid fa-trash"></i> Eliminar cita
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Appointment Popup -->
+  <div class="modal-overlay" *ngIf="isNewAppointmentModalOpen" (click)="closeNewAppointmentModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <app-new-appointment (close)="closeNewAppointmentModal()"
+        (created)="closeNewAppointmentModal()"></app-new-appointment>
+    </div>
+  </div>
+</div>

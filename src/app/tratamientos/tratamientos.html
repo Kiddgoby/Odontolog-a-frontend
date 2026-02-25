@@ -1,34 +1,36 @@
-<div class="page-header">
-    <h1>Tratamientos</h1>
-</div>
-
-<div class="filters">
-    <input type="text" placeholder="Buscar tratamientos..." [(ngModel)]="searchTerm" />
-
-    <select [(ngModel)]="selectedCategory">
-        <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
-    </select>
-</div>
-
-<div class="layout">
-    <div class="treatments-list">
-        <div class="card" *ngFor="let t of tratamientosFiltrados">
-            <div class="card-header">
-                <h3>{{ t.nombre }}</h3>
-                <span class="category">{{ t.categoria }}</span>
-            </div>
-
-            <p class="description">{{ t.descripcion }}</p>
-
-            <div class="meta">
-                <span>{{ t.duracion }} min</span>
-                <span>€{{ t.precio }}</span>
-            </div>
-
-            <div class="actions">
-                <button class="danger" (click)="eliminar(t.id)">Eliminar</button>
-            </div>
-        </div>
+<div class="content">
+    <div class="page-header">
+        <h1>Tratamientos</h1>
     </div>
 
+    <div class="filters">
+        <input type="text" placeholder="Buscar tratamientos..." [(ngModel)]="searchTerm" />
+
+        <select [(ngModel)]="selectedCategory">
+            <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+        </select>
+    </div>
+
+    <div class="layout">
+        <div class="treatments-list">
+            <div class="card" *ngFor="let t of tratamientosFiltrados">
+                <div class="card-header">
+                    <h3>{{ t.nombre }}</h3>
+                    <span class="category">{{ t.categoria }}</span>
+                </div>
+
+                <p class="description">{{ t.descripcion }}</p>
+
+                <div class="meta">
+                    <span>{{ t.duracion }} min</span>
+                    <span>€{{ t.precio }}</span>
+                </div>
+
+                <div class="actions">
+                    <button class="danger" (click)="eliminar(t.id)">Eliminar</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
