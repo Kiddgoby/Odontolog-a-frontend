@@ -19,6 +19,51 @@
   margin-bottom: 2rem;
 }
 
+.actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-appointment {
+  background-color: white;
+  color: #1a73e8;
+  border: 1px solid #1a73e8;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-appointment:hover {
+  background-color: #e8f0fe;
+}
+
+.btn-new {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-new:hover {
+  background-color: #1557b0;
+}
+
+.btn-new:active {
+  transform: scale(0.98);
+}
+
 .title-section h1 {
   font-size: 2rem;
   font-weight: 700;
@@ -30,29 +75,6 @@
   color: #64748b;
   margin: 0.25rem 0 0;
   font-size: 0.95rem;
-}
-
-.btn-new {
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.2s, transform 0.1s;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-}
-
-.btn-new:hover {
-  background-color: #1d4ed8;
-}
-
-.btn-new:active {
-  transform: scale(0.98);
 }
 
 .search-section {
@@ -86,8 +108,8 @@
 
 .search-bar input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
 }
 
 .table-container {
@@ -199,6 +221,44 @@ td {
 .view-details:hover {
   color: #2563eb;
   text-decoration: underline;
+}
+
+/* Modal Styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: white;
+  padding: 0;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {

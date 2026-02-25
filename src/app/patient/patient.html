@@ -4,9 +4,14 @@
       <h1>Pacientes</h1>
       <p>Gestión de pacientes de la clínica</p>
     </div>
-    <button class="btn-new" routerLink="/patient/new">
-      <span class="icon"><i class="fa-solid fa-plus"></i></span> Nuevo Paciente
-    </button>
+    <div class="actions">
+      <button class="btn-appointment" (click)="openNewAppointmentModal()">
+        <i class="fa-solid fa-calendar-plus"></i> Nueva Cita
+      </button>
+      <button class="btn-new" routerLink="/patient/new">
+        <span class="icon"><i class="fa-solid fa-plus"></i></span> Nuevo Paciente
+      </button>
+    </div>
   </div>
 
   <div class="search-section">
@@ -61,5 +66,13 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- New Appointment Popup -->
+  <div class="modal-overlay" *ngIf="isNewAppointmentModalOpen" (click)="closeNewAppointmentModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <app-new-appointment (close)="closeNewAppointmentModal()"
+        (created)="closeNewAppointmentModal()"></app-new-appointment>
+    </div>
   </div>
 </div>

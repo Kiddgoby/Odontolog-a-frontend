@@ -64,7 +64,7 @@
       <div class="card main-card">
         <div class="card-header">
           <h3>Próximas Citas</h3>
-          <a href="#" class="action-link">Nueva cita</a>
+          <button class="action-btn-link" (click)="openNewAppointmentModal()">Nueva cita</button>
         </div>
         <div class="appointments-list" *ngIf="patient.citas">
           <div class="appointment-item" *ngFor="let cita of patient.citas">
@@ -106,6 +106,14 @@
           <p class="no-data" *ngIf="patient.tratamientos.length === 0">No hay tratamientos registrados.</p>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- New Appointment Popup -->
+  <div class="modal-overlay" *ngIf="isNewAppointmentModalOpen" (click)="closeNewAppointmentModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <app-new-appointment (close)="closeNewAppointmentModal()"
+        (created)="closeNewAppointmentModal()"></app-new-appointment>
     </div>
   </div>
 </div>

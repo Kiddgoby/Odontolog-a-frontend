@@ -6,7 +6,7 @@ import { NewPatient } from './new-patient/new-patient';
 import { PacienteDetail } from './paciente-detail/paciente-detail';
 
 import { Tratamientos } from './tratamientos/tratamientos';
-import { Citas } from './citas/citas';
+import { Appointment } from './appointment/appointment';
 import { Calendario } from './calendario/calendario';
 
 export const routes: Routes = [
@@ -17,6 +17,6 @@ export const routes: Routes = [
     { path: 'patient/new', component: NewPatient },
     { path: 'patient/:id', component: PacienteDetail },
     { path: 'tratamientos', component: Tratamientos },
-    { path: 'citas', component: Citas },
+    { path: 'citas', component: Appointment },
     { path: 'calendario', component: Calendario }
 ];
