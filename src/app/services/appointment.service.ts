@@ -19,7 +19,7 @@ export class AppointmentService {
   private appointments: AppointmentData[] = [
     {
       id: 1,
-      fecha: '4/2/2024',
+      fecha: '4/2/2026',
       hora: '09:00',
       paciente: 'María García',
       tratamiento: 'Limpieza dental',
@@ -30,7 +30,7 @@ export class AppointmentService {
     },
     {
       id: 2,
-      fecha: '4/2/2024',
+      fecha: '4/2/2026',
       hora: '10:30',
       paciente: 'Carlos Fernández',
       tratamiento: 'Ortodoncia - Revisión',
@@ -41,7 +41,7 @@ export class AppointmentService {
     },
     {
       id: 3,
-      fecha: '4/2/2024',
+      fecha: '4/2/2026',
       hora: '11:00',
       paciente: 'Ana López',
       tratamiento: 'Extracción',
@@ -52,7 +52,7 @@ export class AppointmentService {
     },
     {
       id: 4,
-      fecha: '5/2/2024',
+      fecha: '5/2/2026',
       hora: '14:00',
       paciente: 'Juan Pérez',
       tratamiento: 'Implante dental',
@@ -63,7 +63,7 @@ export class AppointmentService {
     },
     {
       id: 5,
-      fecha: '5/2/2024',
+      fecha: '5/2/2026',
       hora: '15:30',
       paciente: 'Laura Ruiz',
       tratamiento: 'Blanqueamiento',
@@ -74,7 +74,7 @@ export class AppointmentService {
     },
     {
       id: 6,
-      fecha: '6/2/2024',
+      fecha: '6/2/2026',
       hora: '09:30',
       paciente: 'Pedro Sánchez',
       tratamiento: 'Revisión general',
@@ -85,7 +85,7 @@ export class AppointmentService {
     },
     {
       id: 7,
-      fecha: '6/2/2024',
+      fecha: '6/2/2026',
       hora: '11:00',
       paciente: 'Isabel Torres',
       tratamiento: 'Endodoncia',

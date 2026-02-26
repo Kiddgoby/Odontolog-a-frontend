@@ -1,0 +1,68 @@
+<div class="calendar-container">
+    <header class="calendar-header">
+        <div class="header-left">
+            <h1>Calendario</h1>
+            <span class="current-month">{{ getMonthName() | titlecase }}</span>
+        </div>
+        <div class="header-right">
+            <div class="navigation-btns">
+                <button (click)="prevWeek()" class="nav-btn"><i class="bx bx-chevron-left"></i></button>
+                <button (click)="nextWeek()" class="nav-btn"><i class="bx bx-chevron-right"></i></button>
+            </div>
+            <button class="btn-primary" (click)="openNewAppointment()">
+                <i class="bx bx-plus"></i> Nueva Cita
+            </button>
+        </div>
+    </header>
+
+    <div class="calendar-card">
+        <div class="timetable-container">
+            <!-- Time Column -->
+            <div class="time-axis">
+                <div class="axis-header"></div>
+                <div *ngFor="let hour of hours" class="hour-label">
+                    {{ hour }}
+                </div>
+            </div>
+
+            <!-- Days Columns -->
+            <div class="days-columns">
+                <div *ngFor="let day of days; let i = index" class="day-column">
+                    <div class="column-header" [class.today]="day.isToday">
+                        <span class="day-name">{{ weekDays[i] }}</span>
+                        <span class="day-num">{{ day.date.getDate() }}</span>
+                    </div>
+
+                    <div class="column-body" (click)="openNewAppointment(day.date)">
+                        <!-- Grid Lines -->
+                        <div *ngFor="let hour of hours" class="grid-line"></div>
+
+                        <!-- Appointments positioned by time -->
+                        <div *ngFor="let app of day.appointments" class="timetable-appointment"
+                            [class.status-confirmada]="app.estado === 'confirmada'"
+                            [class.status-pendiente]="app.estado === 'pendiente'"
+                            [style.top]="getAppointmentTop(app.hora)">
+                            <div class="app-content">
+                                <div class="app-header">
+                                    <span class="app-time">{{ app.hora }}</span>
+                                    <span class="app-patient">{{ app.paciente }}</span>
+                                </div>
+                                <div class="app-body">
+                                    <span class="app-treatment">{{ app.tratamiento }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showNewAppointmentModal">
+    <div class="modal-content">
+        <app-new-appointment [initialDate]="selectedDateForNewAppointment" (close)="closeNewAppointment()"
+            (created)="onAppointmentCreated()">
+        </app-new-appointment>
+    </div>
+</div>
