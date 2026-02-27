@@ -1,6 +1,7 @@
 <div class="content">
     <div class="page-header">
         <h1>Tratamientos</h1>
+        <button class="primary" (click)="abrirFormulario()">Añadir Tratamiento</button>
     </div>
 
     <div class="filters">
@@ -27,9 +28,49 @@
                 </div>
 
                 <div class="actions">
+                    <button (click)="editar(t)">Editar</button>
                     <button class="danger" (click)="eliminar(t.id)">Eliminar</button>
                 </div>
             </div>
+        </div>
+
+        <!-- Formulario de Añadir/Editar -->
+        <div class="form-wrapper" *ngIf="showForm">
+            <h3>{{ isEditing ? 'Editar' : 'Nuevo' }} Tratamiento</h3>
+            <form (submit)="guardar()">
+                <label>
+                    Nombre:
+                    <input type="text" [(ngModel)]="currentTratamiento.nombre" name="nombre" required />
+                </label>
+
+                <label>
+                    Categoría:
+                    <select [(ngModel)]="currentTratamiento.categoria" name="categoria">
+                        <option *ngFor="let c of categorias.slice(1)" [value]="c">{{ c }}</option>
+                    </select>
+                </label>
+
+                <label>
+                    Descripción:
+                    <textarea [(ngModel)]="currentTratamiento.descripcion" name="descripcion" rows="3"></textarea>
+                </label>
+
+                <div class="row">
+                    <label>
+                        Duración (min):
+                        <input type="number" [(ngModel)]="currentTratamiento.duracion" name="duracion" required />
+                    </label>
+                    <label>
+                        Precio (€):
+                        <input type="number" [(ngModel)]="currentTratamiento.precio" name="precio" required />
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" (click)="cerrarFormulario()">Cancelar</button>
+                    <button type="submit" class="primary">{{ isEditing ? 'Actualizar' : 'Añadir' }}</button>
+                </div>
+            </form>
         </div>
 
     </div>
