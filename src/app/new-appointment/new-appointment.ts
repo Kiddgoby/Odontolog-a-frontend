@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppointmentService } from '../services/appointment.service';
@@ -12,6 +12,7 @@ import { TreatmentService, Tratamiento } from '../services/treatment.service';
   styleUrl: './new-appointment.css',
 })
 export class NewAppointment implements OnInit {
+  @Input() initialDate: string = '';
   @Output() close = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
 
@@ -35,6 +36,9 @@ export class NewAppointment implements OnInit {
 
   ngOnInit(): void {
     this.allTreatments = this.treatmentService.getTratamientos();
+    if (this.initialDate) {
+      this.appointmentData.fecha = this.initialDate;
+    }
   }
 
   onTreatmentInput(): void {

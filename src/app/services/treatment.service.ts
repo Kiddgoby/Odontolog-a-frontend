@@ -26,4 +26,22 @@ export class TreatmentService {
   getTratamientos(): Tratamiento[] {
     return this.tratamientos;
   }
+
+  addTratamiento(tratamiento: Omit<Tratamiento, 'id'>) {
+    const id = this.tratamientos.length > 0 ? Math.max(...this.tratamientos.map(t => t.id)) + 1 : 1;
+    const newTratamiento = { ...tratamiento, id };
+    this.tratamientos.push(newTratamiento);
+    return newTratamiento;
+  }
+
+  updateTratamiento(tratamiento: Tratamiento) {
+    const index = this.tratamientos.findIndex(t => t.id === tratamiento.id);
+    if (index !== -1) {
+      this.tratamientos[index] = tratamiento;
+    }
+  }
+
+  deleteTratamiento(id: number) {
+    this.tratamientos = this.tratamientos.filter(t => t.id !== id);
+  }
 }
