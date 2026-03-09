@@ -2,10 +2,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
-  background: white;
+  padding: 16px 40px;
+  background: var(--bg-header);
   border-bottom: 1px solid var(--border-color);
   width: 100%;
+  box-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 }
 
 .header-info {
