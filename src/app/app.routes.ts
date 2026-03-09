@@ -11,12 +11,12 @@ import { Calendario } from './calendario/calendario';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
-    { path: 'login', component: LoginComponent },
-    { path: 'home', component: HomeComponent },
-    { path: 'patient', component: Patient },
-    { path: 'patient/new', component: NewPatient },
-    { path: 'patient/:id', component: PacienteDetail },
-    { path: 'tratamientos', component: Tratamientos },
-    { path: 'citas', component: Appointment },
-    { path: 'calendario', component: Calendario }
+    { path: 'login', component: LoginComponent, data: { title: 'Acceso' } },
+    { path: 'home', component: HomeComponent, data: { title: 'Panel de Control' } },
+    { path: 'patient', component: Patient, data: { title: 'Listado de Pacientes' } },
+    { path: 'patient/new', component: NewPatient, data: { title: 'Nuevo Paciente' } },
+    { path: 'patient/:id', component: PacienteDetail, data: { title: 'Detalle de Paciente' } },
+    { path: 'tratamientos', component: Tratamientos, data: { title: 'Gestión de Tratamientos' } },
+    { path: 'citas', component: Appointment, data: { title: 'Citas Médicas' } },
+    { path: 'calendario', component: Calendario, data: { title: 'Calendario de Citas' } }
 ];

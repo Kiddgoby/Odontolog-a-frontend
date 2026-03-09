@@ -3,10 +3,11 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { Menu } from './menu/menu';
+import { HeaderComponent } from './header/header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Menu],
+  imports: [RouterOutlet, Menu, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

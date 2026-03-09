@@ -3,6 +3,9 @@
     <app-menu></app-menu>
     }
     <main class="content">
+        @if (showMenu()) {
+        <app-header></app-header>
+        }
         <router-outlet />
     </main>
 </div>
