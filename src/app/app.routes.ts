@@ -8,6 +8,7 @@ import { PacienteDetail } from './paciente-detail/paciente-detail';
 import { Tratamientos } from './tratamientos/tratamientos';
 import { Appointment } from './appointment/appointment';
 import { Calendar } from './calendar/calendar';
+import { ConnectivityTest } from './connectivity-test/connectivity-test';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,5 +19,6 @@ export const routes: Routes = [
     { path: 'patient/:id', component: PacienteDetail, data: { title: 'Detalle de Paciente' } },
     { path: 'tratamientos', component: Tratamientos, data: { title: 'Gestión de Tratamientos' } },
     { path: 'citas', component: Appointment, data: { title: 'Citas Médicas' } },
-    { path: 'calendar', component: Calendar, data: { title: 'Calendario de Citas' } }
+    { path: 'calendar', component: Calendar, data: { title: 'Calendario de Citas' } },
+    { path: 'test-connection', component: ConnectivityTest, data: { title: 'Prueba de Conexión' } }
 ];

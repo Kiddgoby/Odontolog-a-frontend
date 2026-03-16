@@ -37,8 +37,8 @@
         <tr *ngFor="let patient of filteredPatients">
           <td>
             <div class="patient-info">
-              <span class="patient-name">{{ patient.nombre }}</span>
-              <span class="patient-age">{{ patient.edad }} años</span>
+              <span class="patient-name">{{ patient.firstName }} {{ patient.lastName }}</span>
+              <span class="patient-age">{{ patient.edad || '-' }} años</span>
             </div>
           </td>
           <td>
