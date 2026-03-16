@@ -8,8 +8,8 @@
     </div>
     <div class="header-main">
       <div class="patient-title">
-        <h1>{{ patient.nombre }}</h1>
-        <p>{{ patient.edad }} años</p>
+        <h1>{{ patient.firstName }} {{ patient.lastName }}</h1>
+        <p>{{ patient.edad || '-' }} años</p>
       </div>
       <button class="btn-edit">Editar Paciente</button>
     </div>
@@ -40,19 +40,19 @@
         <div class="medical-grid">
           <div class="medical-item">
             <label>Alergias</label>
-            <p>{{ patient.medication_allergies }}</p>
+            <p>{{ patient.medicationAllergies }}</p>
           </div>
           <div class="medical-item">
             <label>Seguro</label>
-            <p>{{ patient.billing_data }}</p>
+            <p>{{ patient.billingData }}</p>
           </div>
           <div class="medical-item">
             <label>Estado de Salud</label>
-            <p>{{ patient.health_status }}</p>
+            <p>{{ patient.healthStatus }}</p>
           </div>
           <div class="medical-item">
             <label>Historial familiar</label>
-            <p>{{ patient.family_history }}</p>
+            <p>{{ patient.familyHistory }}</p>
           </div>
         </div>
       </div>
@@ -66,21 +66,21 @@
           <h3>Próximas Citas</h3>
           <button class="action-btn-link" (click)="openNewAppointmentModal()">Nueva cita</button>
         </div>
-        <div class="appointments-list" *ngIf="patient.citas">
-          <div class="appointment-item" *ngFor="let cita of patient.citas">
+        <div class="appointments-list" *ngIf="patient.appointments">
+          <div class="appointment-item" *ngFor="let cita of patient.appointments">
             <div class="appointment-icon">
               <i class="fa-regular fa-calendar"></i>
             </div>
             <div class="appointment-details">
-              <h4>{{ cita.titulo }}</h4>
-              <p>{{ cita.fecha }} a las {{ cita.hora }}</p>
-              <span class="doctor">{{ cita.doctor }}</span>
+              <h4>{{ cita.consultationReason }}</h4>
+              <p>{{ cita.visitDate | date:'dd/MM/yyyy' }}</p>
+              <span class="doctor">{{ cita.dentist?.firstName }} {{ cita.dentist?.lastName }}</span>
             </div>
-            <div class="status-badge" [ngClass]="cita.estado">
-              {{ cita.estado }}
+            <div class="status-badge" [ngClass]="cita.status">
+              {{ cita.status }}
             </div>
           </div>
-          <p class="no-data" *ngIf="patient.citas.length === 0">No hay citas programadas.</p>
+          <p class="no-data" *ngIf="patient.appointments.length === 0">No hay citas programadas.</p>
         </div>
       </div>
 

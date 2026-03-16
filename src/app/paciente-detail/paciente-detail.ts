@@ -26,7 +26,9 @@ export class PacienteDetail implements OnInit {
 
   loadPatient(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.patient = this.patientService.getPatientById(id);
+    this.patientService.getPatientById(id).subscribe(data => {
+      this.patient = data;
+    });
   }
 
   openNewAppointmentModal(): void {

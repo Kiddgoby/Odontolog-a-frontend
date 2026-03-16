@@ -20,34 +20,34 @@
 
       <div class="form-grid">
         <div class="form-group">
-          <label for="first_name">Nombre</label>
-          <input type="text" id="first_name" formControlName="first_name" placeholder="Ej: María">
+          <label for="firstName">Nombre</label>
+          <input type="text" id="firstName" formControlName="firstName" placeholder="Ej: María">
           <div class="error-msg"
-            *ngIf="patientForm.get('first_name')?.touched && patientForm.get('first_name')?.invalid">
+            *ngIf="patientForm.get('firstName')?.touched && patientForm.get('firstName')?.invalid">
             El nombre es obligatorio (mín. 2 caracteres).
           </div>
         </div>
 
         <div class="form-group">
-          <label for="last_name">Apellidos</label>
-          <input type="text" id="last_name" formControlName="last_name" placeholder="Ej: García López">
-          <div class="error-msg" *ngIf="patientForm.get('last_name')?.touched && patientForm.get('last_name')?.invalid">
+          <label for="lastName">Apellidos</label>
+          <input type="text" id="lastName" formControlName="lastName" placeholder="Ej: García López">
+          <div class="error-msg" *ngIf="patientForm.get('lastName')?.touched && patientForm.get('lastName')?.invalid">
             Los apellidos son obligatorios.
           </div>
         </div>
 
         <div class="form-group">
-          <label for="national_id">DNI / NIE</label>
-          <input type="text" id="national_id" formControlName="national_id" placeholder="12345678X">
+          <label for="nationalId">DNI / NIE</label>
+          <input type="text" id="nationalId" formControlName="nationalId" placeholder="12345678X">
           <div class="error-msg"
-            *ngIf="patientForm.get('national_id')?.touched && patientForm.get('national_id')?.invalid">
+            *ngIf="patientForm.get('nationalId')?.touched && patientForm.get('nationalId')?.invalid">
             El DNI es obligatorio.
           </div>
         </div>
 
         <div class="form-group">
-          <label for="social_security_number">Nº Seguridad Social</label>
-          <input type="text" id="social_security_number" formControlName="social_security_number"
+          <label for="socialSecurityNumber">Nº Seguridad Social</label>
+          <input type="text" id="socialSecurityNumber" formControlName="socialSecurityNumber"
             placeholder="Opcional">
         </div>
 
@@ -86,26 +86,26 @@
 
       <div class="form-grid">
         <div class="form-group">
-          <label for="medication_allergies">Alergias y Medicación</label>
-          <textarea id="medication_allergies" formControlName="medication_allergies"
+          <label for="medicationAllergies">Alergias y Medicación</label>
+          <textarea id="medicationAllergies" formControlName="medicationAllergies"
             placeholder="Detalle alergias a medicamentos..."></textarea>
         </div>
 
         <div class="form-group">
-          <label for="health_status">Estado de Salud General</label>
-          <textarea id="health_status" formControlName="health_status"
+          <label for="healthStatus">Estado de Salud General</label>
+          <textarea id="healthStatus" formControlName="healthStatus"
             placeholder="Patologías previas, cirugías..."></textarea>
         </div>
 
         <div class="form-group">
-          <label for="family_history">Historial Familiar</label>
-          <textarea id="family_history" formControlName="family_history"
+          <label for="familyHistory">Historial Familiar</label>
+          <textarea id="familyHistory" formControlName="familyHistory"
             placeholder="Antecedentes médicos relevantes..."></textarea>
         </div>
 
         <div class="form-group">
-          <label for="lifestyle_habits">Hábitos de Vida</label>
-          <textarea id="lifestyle_habits" formControlName="lifestyle_habits"
+          <label for="lifestyleHabits">Hábitos de Vida</label>
+          <textarea id="lifestyleHabits" formControlName="lifestyleHabits"
             placeholder="Fumador, higiene dental, dieta..."></textarea>
         </div>
       </div>
@@ -120,8 +120,8 @@
 
       <div class="form-grid">
         <div class="form-group full-width">
-          <label for="billing_data">Información de Facturación</label>
-          <input type="text" id="billing_data" formControlName="billing_data"
+          <label for="billingData">Información de Facturación</label>
+          <input type="text" id="billingData" formControlName="billingData"
             placeholder="Compañía de seguro o datos fiscales">
         </div>
       </div>

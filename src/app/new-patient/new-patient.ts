@@ -28,26 +28,27 @@ export class NewPatient implements OnInit {
     const today = new Date().toISOString().split('T')[0];
 
     this.patientForm = this.fb.group({
-      first_name: ['', [Validators.required, Validators.minLength(2)]],
-      last_name: ['', [Validators.required, Validators.minLength(2)]],
-      national_id: ['', [Validators.required]],
-      social_security_number: [''],
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      nationalId: ['', [Validators.required]],
+      socialSecurityNumber: [''],
       phone: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       address: ['', [Validators.required]],
-      billing_data: [''],
-      health_status: [''],
-      family_history: [''],
-      lifestyle_habits: [''],
-      medication_allergies: [''],
-      registration_date: [today]
+      billingData: [''],
+      healthStatus: [''],
+      familyHistory: [''],
+      lifestyleHabits: [''],
+      medicationAllergies: [''],
+      registrationDate: [today]
     });
   }
 
   onSubmit(): void {
     if (this.patientForm.valid) {
-      this.patientService.addPatient(this.patientForm.value);
-      this.router.navigate(['/patient']);
+      this.patientService.addPatient(this.patientForm.value).subscribe(() => {
+        this.router.navigate(['/patient']);
+      });
     } else {
       this.markFormGroupTouched(this.patientForm);
     }
