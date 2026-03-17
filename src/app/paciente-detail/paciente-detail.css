@@ -327,6 +327,50 @@
   }
 }
 
+/* Odontograma Access Card */
+.odontograme-access-card .access-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.access-info {
+  margin-bottom: 2rem;
+}
+
+.access-info i {
+  font-size: 3rem;
+  color: #1a73e8;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.access-info p {
+  color: #64748b;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.btn-odontograma {
+  background-color: #1a73e8;
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.btn-odontograma:hover {
+  background-color: #1557b0;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  color: white;
+}
+
 @media (max-width: 900px) {
   .main-layout {
     grid-template-columns: 1fr;

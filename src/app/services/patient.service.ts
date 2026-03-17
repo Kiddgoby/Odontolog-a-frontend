@@ -18,6 +18,16 @@ export interface Tratamiento {
   descripcion: string;
 }
 
+export interface ToothState {
+  sections: { [key: string]: string }; // section index -> hex color
+  absent: boolean;
+}
+
+export interface OdontogramData {
+  notes?: string;
+  teeth: { [toothNumber: number]: ToothState };
+}
+
 export interface PatientData {
   id: number;
   firstName: string;
@@ -61,5 +71,13 @@ export class PatientService {
   addPatient(patient: any): Observable<PatientData> {
     console.log(`PatientService: Realizando POST a ${this.apiUrl}`, patient);
     return this.http.post<PatientData>(this.apiUrl, patient);
+  }
+
+  updateOdontogram(patientId: number, data: OdontogramData): void {
+    const patient = this.getPatientById(patientId);
+    if (patient) {
+      patient.odontogram = data;
+      console.log(`Odontograma actualizado para el paciente ${patientId}`, data);
+    }
   }
 }

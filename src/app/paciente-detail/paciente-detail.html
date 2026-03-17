@@ -106,6 +106,22 @@
           <p class="no-data" *ngIf="patient.tratamientos.length === 0">No hay tratamientos registrados.</p>
         </div>
       </div>
+
+      <!-- Acceso al Odontograma -->
+      <div class="card main-card odontograme-access-card">
+        <div class="card-header">
+          <h3>Odontograma</h3>
+        </div>
+        <div class="access-content">
+          <div class="access-info">
+            <i class="fa-solid fa-tooth"></i>
+            <p>Accede al odontograma interactivo para ver y actualizar el estado dental del paciente.</p>
+          </div>
+          <a [routerLink]="['/patient', patient.id, 'odontograma']" class="btn-odontograma">
+            Ver Odontograma Completo
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
