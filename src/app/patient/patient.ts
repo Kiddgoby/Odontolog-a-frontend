@@ -20,7 +20,9 @@ export class Patient implements OnInit {
   constructor(private patientService: PatientService) { }
 
   ngOnInit(): void {
-    this.patients = this.patientService.getPatients();
+    this.patientService.getPatients().subscribe(data => {
+      this.patients = data;
+    });
   }
 
   get filteredPatients() {
@@ -29,7 +31,8 @@ export class Patient implements OnInit {
     }
     const search = this.searchText.toLowerCase();
     return this.patients.filter(p =>
-      (p.nombre?.toLowerCase().includes(search) || false) ||
+      (p.firstName?.toLowerCase().includes(search) || false) ||
+      (p.lastName?.toLowerCase().includes(search) || false) ||
       (p.email?.toLowerCase().includes(search) || false) ||
       (p.phone?.includes(search) || false)
     );
