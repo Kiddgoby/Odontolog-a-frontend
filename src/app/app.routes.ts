@@ -16,6 +16,7 @@ export const routes: Routes = [
     { path: 'patient', component: Patient, data: { title: 'Listado de Pacientes' } },
     { path: 'patient/new', component: NewPatient, data: { title: 'Nuevo Paciente' } },
     { path: 'patient/:id', component: PacienteDetail, data: { title: 'Detalle de Paciente' } },
+    { path: 'patient/:id/odontograma', loadComponent: () => import('./odontograma/odontograma').then(m => m.Odontograma), data: { title: 'Odontograma' } },
     { path: 'tratamientos', component: Tratamientos, data: { title: 'Gestión de Tratamientos' } },
     { path: 'citas', component: Appointment, data: { title: 'Citas Médicas' } },
     { path: 'calendar', component: Calendar, data: { title: 'Calendario de Citas' } }

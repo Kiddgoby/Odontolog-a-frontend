@@ -1,0 +1,250 @@
+:root {
+    --primary: #1e3a5f;
+    --accent: #ff0000;
+    --bg: #eef3f8;
+    --card: #ffffff;
+    --danger: #000000;
+    --text: #1f2937;
+    --muted: #94a3b8;
+    --tooth-border: #000000;
+}
+
+.odontograma-container {
+    padding: 30px;
+    background: var(--card);
+    border-radius: 20px;
+    min-height: 100vh;
+}
+
+.header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 10px;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-back:hover {
+    background: #e2e8f0;
+}
+
+.title-section {
+    text-align: center;
+}
+
+.header-spacer {
+    width: 140px;
+    /* Same as btn-back approx to keep title centered */
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--primary);
+}
+
+.patient-subtitle {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+#colores {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin: 0 auto 30px;
+    padding: 15px 25px;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: fit-content;
+}
+
+.color-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.25s ease;
+    border: 2px solid transparent;
+}
+
+.color-btn:hover {
+    transform: scale(1.15);
+}
+
+.color-seleccionado {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(30, 58, 95, 0.15);
+    transform: scale(1.15);
+}
+
+.odontograma-wrapper {
+    max-width: 100%;
+    margin: auto;
+    padding: 50px;
+    background: var(--card);
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 50px;
+    position: relative;
+    overflow-x: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+}
+
+.odontograma-wrapper::before,
+.odontograma-wrapper::after {
+    content: '';
+    position: absolute;
+    background: #f1f5f9;
+    z-index: 1;
+}
+
+.odontograma-wrapper::before {
+    top: 50%;
+    left: 40px;
+    right: 40px;
+    height: 1px;
+    transform: translateY(-50%);
+}
+
+.odontograma-wrapper::after {
+    left: 50%;
+    top: 40px;
+    bottom: 40px;
+    width: 1px;
+    transform: translateX(-50%);
+}
+
+.quadrant {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    min-width: 400px;
+}
+
+.quadrant-row {
+    display: flex;
+    gap: 6px;
+}
+
+.q-ul .quadrant-row,
+.q-ll .quadrant-row {
+    justify-content: flex-end;
+}
+
+.q-ur .quadrant-row,
+.q-lr .quadrant-row {
+    justify-content: flex-start;
+}
+
+.diente-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 46px;
+    transition: 0.2s ease;
+}
+
+.diente-box:hover {
+    transform: translateY(-3px);
+}
+
+.numero {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.row-bottom .numero {
+    order: 2;
+    margin-top: 6px;
+    margin-bottom: 0;
+}
+
+.row-bottom .diente {
+    order: 1;
+}
+
+.diente {
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    position: relative;
+}
+
+.seccion {
+    fill: #fff;
+    stroke: #94a3b8;
+    stroke-width: 1;
+    transition: 0.2s ease;
+}
+
+.seccion:hover {
+    stroke: var(--primary);
+    stroke-width: 1.5;
+    filter: brightness(0.95);
+}
+
+.x-ausencia {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    font-weight: bold;
+    color: #ef4444;
+    display: none;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.notes-container {
+    margin-top: 50px;
+    padding: 30px;
+    background: #f8fafc;
+    border-radius: 20px;
+    border: 1px solid #f1f5f9;
+}
+
+.notes-container h3 {
+    margin: 0 0 15px;
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.notes-container textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.notes-container textarea:focus {
+    border-color: var(--primary);
+}

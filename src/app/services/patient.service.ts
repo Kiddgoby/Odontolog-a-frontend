@@ -16,6 +16,16 @@ export interface Tratamiento {
   descripcion: string;
 }
 
+export interface ToothState {
+  sections: { [key: string]: string }; // section index -> hex color
+  absent: boolean;
+}
+
+export interface OdontogramData {
+  notes?: string;
+  teeth: { [toothNumber: number]: ToothState };
+}
+
 export interface PatientData {
   id: number;
   nombre: string;
@@ -32,6 +42,7 @@ export interface PatientData {
   estado: string;
   citas: Cita[];
   tratamientos: Tratamiento[];
+  odontogram?: OdontogramData;
 }
 
 @Injectable({
@@ -142,5 +153,13 @@ export class PatientService {
       family_history: patient.family_history || '-'
     };
     this.patients.push(newPatient);
+  }
+
+  updateOdontogram(patientId: number, data: OdontogramData): void {
+    const patient = this.getPatientById(patientId);
+    if (patient) {
+      patient.odontogram = data;
+      console.log(`Odontograma actualizado para el paciente ${patientId}`, data);
+    }
   }
 }
