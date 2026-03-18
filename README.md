@@ -1,59 +1,132 @@
-# OdontologiaFrontend
+# 🦷 Odontología Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
+Aplicación frontend Angular para la gestión de una clínica odontológica. Incluye módulos de citas, pacientes y tratamientos.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Comandos principales
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Arrancar el servidor de desarrollo
 
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+> La app estará disponible en **http://localhost:4200**
+
+### Instalar dependencias
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
-
-To build the project run:
+### Compilar para producción
 
 ```bash
-ng build
+npm run build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Ejecutar tests
 
 ```bash
-ng test
+npm test
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## 🔧 Backend
+
+El frontend se conecta a un servidor backend (API REST). Asegúrate de tenerlo arrancado antes de usar el frontend.
+
+### Si usas Symfony
 
 ```bash
-ng e2e
+# Arrancar en el puerto por defecto (8000)
+symfony serve
+
+# Arrancar en un puerto específico
+symfony serve --port=42000
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Si usas PHP directamente
 
-## Additional Resources
+```bash
+php -S localhost:42000 -t public
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+> La URL de la API está configurada en `src/app/services/patient.service.ts`
+
+---
+
+## 📁 Estructura del proyecto
+
+```
+src/
+├── app/
+│   ├── services/
+│   │   ├── appointment.service.ts   # Servicio de citas (datos locales)
+│   │   ├── patient.service.ts       # Servicio de pacientes (conecta al backend)
+│   │   └── treatment.service.ts     # Servicio de tratamientos (datos locales)
+│   ├── appointment/                 # Módulo de citas
+│   ├── tratamientos/                # Módulo de tratamientos
+│   ├── app.config.ts                # Configuración principal de Angular
+│   └── app.routes.ts                # Rutas de la aplicación
+├── main.ts                          # Entry point del navegador
+├── main.server.ts                   # Entry point del servidor (SSR)
+└── server.ts                        # Servidor Express para SSR
+```
+
+---
+
+## 🛠️ Cambios realizados para solucionar el error `NG0908`
+
+El error **NG0908: Angular requires Zone.js** se producía porque el proyecto usa **SSR (Server Side Rendering)** y `zone.js` no estaba instalado ni importado.
+
+### 1. Instalación de `zone.js`
+
+```bash
+npm install zone.js --save
+```
+
+`zone.js` es una dependencia necesaria cuando se usa `provideZoneChangeDetection()` en la configuración de Angular.
+
+### 2. `angular.json` — Añadido polyfill para el navegador
+
+```diff
+"options": {
++  "polyfills": ["zone.js"],
+   "browser": "src/main.ts",
+```
+
+Esto asegura que `zone.js` se cargue correctamente en el bundle del navegador.
+
+### 3. `src/main.server.ts` — Importación para SSR
+
+```diff
++import 'zone.js/node';
+ import { BootstrapContext, bootstrapApplication } from '@angular/platform-browser';
+```
+
+El bundle del servidor (Node.js/Vite) necesita esta importación explícita porque los polyfills de `angular.json` solo aplican al navegador.
+
+---
+
+## ⚙️ Tecnologías
+
+| Tecnología | Versión |
+|---|---|
+| Angular | ^21.1.0 |
+| Angular SSR | ^21.1.4 |
+| Express | ^5.1.0 |
+| TypeScript | ~5.9.2 |
+| Zone.js | instalado |
+| Node.js | ^20 |
+
+---
+
+## 📝 Notas
+
+- El proyecto usa **SSR (Server Side Rendering)** con Express.
+- Los servicios de **citas** y **tratamientos** usan datos locales (hardcodeados).
+- El servicio de **pacientes** (`patient.service.ts`) se conecta al backend mediante HTTP.
+  - URL configurada: `http://localhost:4200/api/patients` *(ajustar al puerto del backend)*

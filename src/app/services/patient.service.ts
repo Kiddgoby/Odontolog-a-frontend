@@ -54,7 +54,7 @@ export interface PatientData {
   providedIn: 'root'
 })
 export class PatientService {
-  private apiUrl = 'http://localhost:42000/api/patients';
+  private apiUrl = 'http://localhost:4200/api/patients';
   private http = inject(HttpClient);
 
   constructor() { }
