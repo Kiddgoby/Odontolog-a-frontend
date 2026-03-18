@@ -48,6 +48,7 @@ export interface PatientData {
   citas?: Cita[];
   tratamientos?: Tratamiento[];
   appointments?: any[]; // For the actual backend response
+  odontogram?: OdontogramData;
 }
 
 @Injectable({
@@ -74,10 +75,13 @@ export class PatientService {
   }
 
   updateOdontogram(patientId: number, data: OdontogramData): void {
-    const patient = this.getPatientById(patientId);
-    if (patient) {
-      patient.odontogram = data;
-      console.log(`Odontograma actualizado para el paciente ${patientId}`, data);
-    }
+    this.getPatientById(patientId).subscribe(patient => {
+      if (patient) {
+        patient.odontogram = data;
+        this.http.put<PatientData>(`${this.apiUrl}/${patientId}`, patient).subscribe(() => {
+          console.log(`Odontograma actualizado para el paciente ${patientId}`, data);
+        });
+      }
+    });
   }
 }

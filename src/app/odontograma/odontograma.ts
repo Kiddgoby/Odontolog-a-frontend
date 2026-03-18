@@ -54,13 +54,17 @@ export class Odontograma implements OnInit {
         }
 
         if (this.patientId) {
-            const patient = this.patientService.getPatientById(this.patientId);
-            if (patient) {
-                this.patientName = patient.nombre;
-                if (patient.odontogram) {
-                    this.odontogramData = JSON.parse(JSON.stringify(patient.odontogram));
+            this.patientService.getPatientById(this.patientId).subscribe(patient => {
+                if (patient) {
+                    this.patientName = `${patient.firstName} ${patient.lastName}`;
+                    if (patient.odontogram) {
+                        this.odontogramData = JSON.parse(JSON.stringify(patient.odontogram));
+                    }
+                    if (!this.odontogramData.teeth) {
+                        this.odontogramData.teeth = {};
+                    }
                 }
-            }
+            });
         } else if (this.initialData) {
             this.odontogramData = JSON.parse(JSON.stringify(this.initialData));
         }
