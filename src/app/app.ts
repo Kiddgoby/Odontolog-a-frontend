@@ -2,13 +2,14 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
+import { CommonModule } from '@angular/common';
 import { Menu } from './menu/menu';
 import { HeaderComponent } from './header/header';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Menu, HeaderComponent],
+  imports: [CommonModule, RouterOutlet, Menu, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
