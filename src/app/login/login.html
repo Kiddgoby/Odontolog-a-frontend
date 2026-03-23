@@ -17,7 +17,7 @@
         </div>
         }
 
-        <form [formGroup]="loginForm">
+        <form [formGroup]="loginForm" (ngSubmit)="handleLogin()">
 
             <label for="email">Correo Electrónico</label>
             <input id="email" type="email" formControlName="email" placeholder="usuario@clinica.com" />
@@ -30,7 +30,7 @@
                 <label for="remember">Recordar mi correo</label>
             </div>
 
-            <button type="button" (click)="handleLogin()">
+            <button type="submit">
                 Iniciar Sesión
             </button>
         </form>

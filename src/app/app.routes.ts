@@ -21,5 +21,6 @@ export const routes: Routes = [
     { path: 'tratamientos', component: Tratamientos, data: { title: 'Gestión de Tratamientos' } },
     { path: 'citas', component: Appointment, data: { title: 'Citas Médicas' } },
     { path: 'calendar', component: Calendar, data: { title: 'Calendario de Citas' } },
-    { path: 'test-connection', component: ConnectivityTest, data: { title: 'Prueba de Conexión' } }
+    { path: 'test-connection', component: ConnectivityTest, data: { title: 'Prueba de Conexión' } },
+    { path: '**', redirectTo: 'login' }
 ];

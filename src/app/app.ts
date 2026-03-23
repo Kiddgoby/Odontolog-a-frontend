@@ -7,6 +7,7 @@ import { HeaderComponent } from './header/header';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [RouterOutlet, Menu, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -17,8 +18,11 @@ export class App {
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      map(event => (event as NavigationEnd).urlAfterRedirects)
+      filter((event): event is NavigationEnd => {
+        console.log('Router event:', event);
+        return event instanceof NavigationEnd;
+      }),
+      map(event => event.urlAfterRedirects)
     ),
     { initialValue: this.router.url }
   );
