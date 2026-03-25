@@ -16,12 +16,24 @@ export class Patient implements OnInit {
   searchText: string = '';
   patients: PatientData[] = [];
   isNewAppointmentModalOpen: boolean = false;
+  isLoading = false;
+  errorMessage: string | null = null;
 
   constructor(private patientService: PatientService) { }
 
   ngOnInit(): void {
-    this.patientService.getPatients().subscribe(data => {
-      this.patients = data;
+    this.isLoading = true;
+    this.errorMessage = null;
+    this.patientService.getPatients().subscribe({
+      next: data => {
+        this.patients = data;
+        this.isLoading = false;
+      },
+      error: err => {
+        console.error('Patient: error al cargar pacientes', err);
+        this.errorMessage = 'No se pudieron cargar los pacientes. Verifique servidor backend y CORS.';
+        this.isLoading = false;
+      }
     });
   }
 
