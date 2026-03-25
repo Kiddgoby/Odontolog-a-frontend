@@ -81,6 +81,35 @@
   margin-bottom: 1.5rem;
 }
 
+.status-messages {
+  margin-bottom: 1rem;
+}
+
+.status {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.status.loading {
+  background-color: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+.status.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.status.empty {
+  background-color: #e2e8f0;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
 .search-bar {
   position: relative;
   width: 100%;

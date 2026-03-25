@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, map, throwError } from 'rxjs';
 
 export interface Cita {
   titulo: string;
@@ -55,14 +55,30 @@ export interface PatientData {
   providedIn: 'root'
 })
 export class PatientService {
-  private apiUrl = 'http://localhost:4200/api/patients';
+  // El backend de desarrollo de Django/Flask está en 8000, no 4200
+  private apiUrl = 'http://localhost:8000/api/patients';
   private http = inject(HttpClient);
 
   constructor() { }
 
   getPatients(): Observable<PatientData[]> {
     console.log(`PatientService: Realizando GET a ${this.apiUrl}`);
-    return this.http.get<PatientData[]>(this.apiUrl);
+    return this.http.get<PatientData[] | { data: PatientData[] }>(this.apiUrl).pipe(
+      map(response => {
+        if (Array.isArray(response)) {
+          return response;
+        }
+        if (response && 'data' in response && Array.isArray(response.data)) {
+          return response.data;
+        }
+        console.warn('PatientService: respuesta GET no es array ni {data: array}.', response);
+        return [];
+      }),
+      catchError(error => {
+        console.error('PatientService: error en getPatients', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   getPatientById(id: number): Observable<PatientData> {

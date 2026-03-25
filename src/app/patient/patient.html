@@ -21,7 +21,13 @@
     </div>
   </div>
 
-  <div class="table-container">
+  <div class="status-messages">
+    <div *ngIf="isLoading" class="status loading">Cargando pacientes desde backend...</div>
+    <div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
+    <div *ngIf="!isLoading && !errorMessage && filteredPatients.length === 0" class="status empty">No hay pacientes para mostrar.</div>
+  </div>
+
+  <div class="table-container" *ngIf="!isLoading && !errorMessage && filteredPatients.length > 0">
     <table>
       <thead>
         <tr>
