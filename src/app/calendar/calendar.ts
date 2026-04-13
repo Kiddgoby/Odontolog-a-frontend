@@ -47,21 +47,27 @@ export class Calendar implements OnInit {
     const startOfWeek = new Date(dateCopy.setDate(diff));
 
     this.days = [];
-    const allAppointments = this.appointmentService.getAppointments();
 
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
-      const isToday = this.isSameDay(date, new Date());
+    this.appointmentService.getAppointments().subscribe({
+      next: allAppointments => {
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
+          const isToday = this.isSameDay(date, new Date());
 
-      const dayAppointments = allAppointments.filter(app => this.isAppointmentOnDay(app, date));
+          const dayAppointments = allAppointments.filter(app => this.isAppointmentOnDay(app, date));
 
-      this.days.push({
-        date,
-        isCurrentMonth: true, // In weekly view, all are "current" for our purposes
-        isToday,
-        appointments: dayAppointments
-      });
-    }
+          this.days.push({
+            date,
+            isCurrentMonth: true, // In weekly view, all are "current" for our purposes
+            isToday,
+            appointments: dayAppointments
+          });
+        }
+      },
+      error: err => {
+        console.error('Error cargando citas para calendario', err);
+      }
+    });
   }
 
   isAppointmentOnDay(app: AppointmentData, date: Date): boolean {
