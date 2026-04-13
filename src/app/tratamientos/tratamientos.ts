@@ -28,7 +28,14 @@ export class Tratamientos implements OnInit {
   }
 
   cargarTratamientos() {
-    this.tratamientos = this.treatmentService.getTratamientos();
+    this.treatmentService.getTratamientos().subscribe({
+      next: (data) => {
+        this.tratamientos = data;
+      },
+      error: (err) => {
+        console.error('Error al cargar tratamientos:', err);
+      }
+    });
   }
 
   get tratamientosFiltrados(): Tratamiento[] {
@@ -68,13 +75,20 @@ export class Tratamientos implements OnInit {
   }
 
   guardar() {
-    if (this.isEditing) {
-      this.treatmentService.updateTratamiento(this.currentTratamiento);
-    } else {
-      this.treatmentService.addTratamiento(this.currentTratamiento);
-    }
-    this.cargarTratamientos();
-    this.cerrarFormulario();
+    const operation = this.isEditing
+      ? this.treatmentService.updateTratamiento(this.currentTratamiento)
+      : this.treatmentService.addTratamiento(this.currentTratamiento);
+
+    operation.subscribe({
+      next: () => {
+        this.cargarTratamientos();
+        this.cerrarFormulario();
+      },
+      error: (err) => {
+        console.error('Error al guardar el tratamiento:', err);
+        alert('Hubo un error al guardar el tratamiento. Por favor, inténtelo de nuevo.');
+      }
+    });
   }
 
   editar(tratamiento: Tratamiento) {
@@ -83,8 +97,15 @@ export class Tratamientos implements OnInit {
 
   eliminar(id: number) {
     if (confirm('¿Estás seguro de que deseas eliminar este tratamiento?')) {
-      this.treatmentService.deleteTratamiento(id);
-      this.cargarTratamientos();
+      this.treatmentService.deleteTratamiento(id).subscribe({
+        next: () => {
+          this.cargarTratamientos();
+        },
+        error: (err) => {
+          console.error('Error al eliminar el tratamiento:', err);
+          alert('Hubo un error al eliminar el tratamiento.');
+        }
+      });
     }
   }
 }

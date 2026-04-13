@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppointmentService } from '../services/appointment.service';
 import { TreatmentService, Tratamiento } from '../services/treatment.service';
+import { PatientService, PatientData } from '../services/patient.service';
+import { DentistService, DentistData } from '../services/dentist.service';
 
 @Component({
   selector: 'app-new-appointment',
@@ -17,60 +19,58 @@ export class NewAppointment implements OnInit {
   @Output() created = new EventEmitter<void>();
 
   appointmentData = {
-    paciente: '',
-    doctor: '',
+    patient_id: null as number | null,
+    dentist_id: null as number | null,
+    treatment_id: null as number | null,
     fecha: '',
     hora: '',
-    tratamiento: ''
+    tratamiento: '' // This will store the reason/name for the backend
   };
 
-  doctors = ['Dr. Rodríguez', 'Dra. Martínez', 'Dr. Sánchez'];
+  patients: PatientData[] = [];
+  doctors: DentistData[] = [];
   allTreatments: Tratamiento[] = [];
-  filteredTreatments: Tratamiento[] = [];
-  showSuggestions: boolean = false;
 
   constructor(
     private appointmentService: AppointmentService,
-    private treatmentService: TreatmentService
+    private treatmentService: TreatmentService,
+    private patientService: PatientService,
+    private dentistService: DentistService
   ) { }
 
   ngOnInit(): void {
-    this.allTreatments = this.treatmentService.getTratamientos();
+    this.loadData();
     if (this.initialDate) {
       this.appointmentData.fecha = this.initialDate;
     }
   }
 
-  onTreatmentInput(): void {
-    if (this.appointmentData.tratamiento) {
-      const search = this.appointmentData.tratamiento.toLowerCase();
-      this.filteredTreatments = this.allTreatments.filter(t =>
-        t.nombre.toLowerCase().includes(search)
-      );
-      this.showSuggestions = this.filteredTreatments.length > 0;
-    } else {
-      this.filteredTreatments = [];
-      this.showSuggestions = false;
+  loadData(): void {
+    this.patientService.getPatients().subscribe(data => this.patients = data);
+    this.dentistService.getDentists().subscribe(data => this.doctors = data);
+    this.treatmentService.getTratamientos().subscribe(data => this.allTreatments = data);
+  }
+
+  onTreatmentChange(event: any): void {
+    const treatmentId = Number(event.target.value);
+    const treatment = this.allTreatments.find(t => t.id === treatmentId);
+    if (treatment) {
+      this.appointmentData.treatment_id = treatment.id;
+      this.appointmentData.tratamiento = treatment.nombre;
     }
   }
 
-  selectTreatment(treatment: Tratamiento): void {
-    this.appointmentData.tratamiento = treatment.nombre;
-    this.showSuggestions = false;
-  }
-
-  hideSuggestions(): void {
-    // Timeout to allow click event on suggestion to fire before hiding
-    setTimeout(() => {
-      this.showSuggestions = false;
-    }, 200);
-  }
-
   onSubmit(): void {
-    if (this.appointmentData.paciente && this.appointmentData.doctor && this.appointmentData.fecha && this.appointmentData.hora) {
-      this.appointmentService.addAppointment(this.appointmentData);
-      this.created.emit();
-      this.close.emit();
+    if (this.appointmentData.patient_id && this.appointmentData.dentist_id && this.appointmentData.fecha && this.appointmentData.hora) {
+      this.appointmentService.addAppointment(this.appointmentData).subscribe({
+        next: () => {
+          this.created.emit();
+          this.close.emit();
+        },
+        error: err => {
+          console.error('Error creando cita', err);
+        }
+      });
     }
   }
 

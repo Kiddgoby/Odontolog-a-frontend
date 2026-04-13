@@ -28,7 +28,14 @@ export class Appointment implements OnInit {
   }
 
   loadAppointments(): void {
-    this.appointments = this.appointmentService.getAppointments();
+    this.appointmentService.getAppointments().subscribe({
+      next: appointments => {
+        this.appointments = appointments;
+      },
+      error: err => {
+        console.error('Error cargando citas', err);
+      }
+    });
   }
 
   setFilter(filter: string): void {
@@ -81,34 +88,54 @@ export class Appointment implements OnInit {
 
   updateStatus(status: 'confirmada' | 'pendiente' | 'completada'): void {
     if (this.selectedAppointment) {
-      this.appointmentService.updateAppointmentStatus(this.selectedAppointment.id, status);
-      this.loadAppointments();
-      this.closePopup();
+      this.appointmentService.updateAppointmentStatus(this.selectedAppointment.id, status).subscribe({
+        next: () => {
+          this.loadAppointments();
+          this.closePopup();
+        },
+        error: err => console.error('Error actualizando estado', err)
+      });
     }
   }
 
   updateTime(): void {
     if (this.selectedAppointment && this.newTime) {
-      this.appointmentService.updateAppointmentTime(this.selectedAppointment.id, this.newTime);
-      this.loadAppointments();
-      this.closePopup();
+      this.appointmentService.updateAppointmentTime(this.selectedAppointment.id, this.newTime).subscribe({
+        next: () => {
+          this.loadAppointments();
+          this.closePopup();
+        },
+        error: err => console.error('Error actualizando hora', err)
+      });
     }
   }
 
   saveChanges(): void {
     if (this.selectedAppointment) {
-      this.appointmentService.updateAppointmentTime(this.selectedAppointment.id, this.newTime);
-      this.appointmentService.updateAppointmentAttendance(this.selectedAppointment.id, this.asistencia);
-      this.loadAppointments();
-      this.closePopup();
+      this.appointmentService.updateAppointmentTime(this.selectedAppointment.id, this.newTime).subscribe({
+        next: () => {
+          this.appointmentService.updateAppointmentAttendance(this.selectedAppointment!.id, this.asistencia).subscribe({
+            next: () => {
+              this.loadAppointments();
+              this.closePopup();
+            },
+            error: err => console.error('Error actualizando asistencia', err)
+          });
+        },
+        error: err => console.error('Error guardando cambios de hora', err)
+      });
     }
   }
 
   markAsAbsent(): void {
     if (this.selectedAppointment) {
-      this.appointmentService.deleteAppointment(this.selectedAppointment.id);
-      this.loadAppointments();
-      this.closePopup();
+      this.appointmentService.deleteAppointment(this.selectedAppointment.id).subscribe({
+        next: () => {
+          this.loadAppointments();
+          this.closePopup();
+        },
+        error: err => console.error('Error eliminando cita', err)
+      });
     }
   }
 }
