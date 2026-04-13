@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, map, throwError } from 'rxjs';
 
 export interface Tratamiento {
   id: number;
@@ -13,35 +15,54 @@ export interface Tratamiento {
   providedIn: 'root'
 })
 export class TreatmentService {
-  private tratamientos: Tratamiento[] = [
-    { id: 1, nombre: 'Limpieza dental', categoria: 'Preventiva', descripcion: 'Limpieza profesional y eliminación de sarro.', duracion: 45, precio: 80 },
-    { id: 2, nombre: 'Ortodoncia', categoria: 'Ortodoncia', descripcion: 'Corrección de la posición dental con brackets.', duracion: 60, precio: 150 },
-    { id: 3, nombre: 'Blanqueamiento', categoria: 'Estética', descripcion: 'Blanqueamiento dental profesional en clínica.', duracion: 90, precio: 200 },
-    { id: 4, nombre: 'Implante dental', categoria: 'Cirugía', descripcion: 'Colocación de implante de titanio.', duracion: 120, precio: 1200 },
-    { id: 5, nombre: 'Extracción', categoria: 'Cirugía', descripcion: 'Extracción dental simple o quirúrgica.', duracion: 30, precio: 100 },
-  ];
+  private apiUrl = 'http://localhost:8000/api/treatments';
+  private http = inject(HttpClient);
 
   constructor() { }
 
-  getTratamientos(): Tratamiento[] {
-    return this.tratamientos;
+  getTratamientos(): Observable<Tratamiento[]> {
+    return this.http.get<any>(this.apiUrl).pipe(
+      map(response => {
+        const rawArray = Array.isArray(response) ? response : (response?.data ?? []);
+        return rawArray.map((raw: any) => ({
+          id: raw.id,
+          nombre: raw.treatmentName || raw.nombre,
+          descripcion: raw.description,
+          categoria: raw.categoria || 'Dental',
+          duracion: raw.duracion || 30,
+          precio: raw.precio || 0
+        }));
+      }),
+      catchError(error => {
+        console.error('TreatmentService: error en getTratamientos', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  addTratamiento(tratamiento: Omit<Tratamiento, 'id'>) {
-    const id = this.tratamientos.length > 0 ? Math.max(...this.tratamientos.map(t => t.id)) + 1 : 1;
-    const newTratamiento = { ...tratamiento, id };
-    this.tratamientos.push(newTratamiento);
-    return newTratamiento;
+  addTratamiento(tratamiento: Omit<Tratamiento, 'id'>): Observable<Tratamiento> {
+    const payload = {
+      treatmentName: tratamiento.nombre,
+      description: tratamiento.descripcion,
+      categoria: tratamiento.categoria,
+      duracion: tratamiento.duracion,
+      precio: tratamiento.precio
+    };
+    return this.http.post<Tratamiento>(this.apiUrl, payload);
   }
 
-  updateTratamiento(tratamiento: Tratamiento) {
-    const index = this.tratamientos.findIndex(t => t.id === tratamiento.id);
-    if (index !== -1) {
-      this.tratamientos[index] = tratamiento;
-    }
+  updateTratamiento(tratamiento: Tratamiento): Observable<Tratamiento> {
+    const payload = {
+      treatmentName: tratamiento.nombre,
+      description: tratamiento.descripcion,
+      categoria: tratamiento.categoria,
+      duracion: tratamiento.duracion,
+      precio: tratamiento.precio
+    };
+    return this.http.put<Tratamiento>(`${this.apiUrl}/${tratamiento.id}`, payload);
   }
 
-  deleteTratamiento(id: number) {
-    this.tratamientos = this.tratamientos.filter(t => t.id !== id);
+  deleteTratamiento(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
