@@ -125,15 +125,9 @@ export class Tratamientos implements OnInit {
 
   eliminar(id: number) {
     if (confirm('¿Estás seguro de que deseas eliminar este tratamiento?')) {
-      this.treatmentService.deleteTratamiento(id).subscribe({
-        next: () => {
-          this.cargarTratamientos();
-        },
-        error: err => {
-          console.error('Error eliminando tratamiento:', err);
-          this.error = 'No se pudo eliminar el tratamiento en el backend.';
-        }
-      });
+      this.treatmentService.deleteTratamiento(id);
+      this.cargarTratamientos();
+      this.cerrarFormulario();
     }
   }
 }

@@ -22,6 +22,13 @@ export class Odontograma implements OnInit, OnDestroy {
     odontogramData: OdontogramData = { teeth: {} };
     patientName: string = '';
 
+    // Estado del modal de confirmación
+    showModal: boolean = false;
+    modalDiente: number = 0;
+    modalSeccion: string = '';
+    modalColor: string = '';
+    modalNote: string = '';
+
     colors: { [key: string]: string } = {
         red: "#ff4d4d",
         blue: "#4d79ff",
@@ -103,18 +110,52 @@ export class Odontograma implements OnInit, OnDestroy {
 
     onSectionClick(numero: number, sectionIndex: string): void {
         const tooth = this.getToothState(numero);
+        this.modalDiente = numero;
+        this.modalSeccion = sectionIndex;
+        this.modalColor = this.colorActual;
 
-        if (this.colorActual === 'black') {
+        // Cargar nota específica de la sección si existe
+        this.modalNote = (tooth.sectionNotes && tooth.sectionNotes[sectionIndex]) || '';
+        this.showModal = true;
+    }
+
+    guardarCambio(): void {
+        const tooth = this.getToothState(this.modalDiente);
+
+        // Inicializar sectionNotes si no existe
+        if (!tooth.sectionNotes) {
+            tooth.sectionNotes = {};
+        }
+
+        // Guardar nota específica para la sección
+        tooth.sectionNotes[this.modalSeccion] = this.modalNote;
+
+        if (this.modalColor === 'black') {
             tooth.absent = !tooth.absent;
-        } else if (this.colorActual === 'erase') {
-            delete tooth.sections[sectionIndex];
+        } else if (this.modalColor === 'erase') {
+            delete tooth.sections[this.modalSeccion];
+            if (tooth.sectionNotes) delete tooth.sectionNotes[this.modalSeccion];
             tooth.absent = false;
         } else {
-            tooth.sections[sectionIndex] = this.selectedHex;
+            tooth.sections[this.modalSeccion] = this.colors[this.modalColor];
             tooth.absent = false;
         }
 
         this.saveChanges();
+        this.cerrarModal();
+    }
+
+    eliminarCambio(): void {
+        const tooth = this.getToothState(this.modalDiente);
+        delete tooth.sections[this.modalSeccion];
+        if (tooth.sectionNotes) delete tooth.sectionNotes[this.modalSeccion];
+        tooth.absent = false;
+        this.saveChanges();
+        this.cerrarModal();
+    }
+
+    cerrarModal(): void {
+        this.showModal = false;
     }
 
     saveChanges(): void {
@@ -136,6 +177,42 @@ export class Odontograma implements OnInit, OnDestroy {
             return tooth.sections[sectionIndex];
         }
         return 'white';
+    }
+
+    getToothName(num: number): string {
+        const names: { [key: number]: string } = {
+            1: 'Incisivo Central',
+            2: 'Incisivo Lateral',
+            3: 'Canino',
+            4: 'Primer Premolar',
+            5: 'Segundo Premolar',
+            6: 'Primer Molar',
+            7: 'Segundo Molar',
+            8: 'Tercer Molar'
+        };
+        const n = num % 10;
+        const q = Math.floor(num / 10);
+        const toothBase = names[n] || 'Diente';
+
+        let location = '';
+        if (q === 1 || q === 5) location = 'Superior Derecho';
+        if (q === 2 || q === 6) location = 'Superior Izquierdo';
+        if (q === 3 || q === 7) location = 'Inferior Izquierdo';
+        if (q === 4 || q === 8) location = 'Inferior Derecho';
+
+        const type = (q > 4) ? 'Temporal ' : '';
+        return `${toothBase} ${type}${location}`;
+    }
+
+    getSectionName(num: number, section: string): string {
+        const sectionNames: { [key: string]: string } = {
+            s1: 'Superior (Vestibular)',
+            s2: 'Derecha',
+            s3: 'Inferior (Palatino/Lingual)',
+            s4: 'Izquierda',
+            s5: 'Centro (Oclusal)'
+        };
+        return sectionNames[section] || section;
     }
 
     goBack(): void {
