@@ -85,6 +85,7 @@ export class Tratamientos implements OnInit {
     if (confirm('¿Estás seguro de que deseas eliminar este tratamiento?')) {
       this.treatmentService.deleteTratamiento(id);
       this.cargarTratamientos();
+      this.cerrarFormulario();
     }
   }
 }

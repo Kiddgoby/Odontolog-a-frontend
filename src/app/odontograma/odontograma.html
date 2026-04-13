@@ -122,4 +122,41 @@
             </div>
         </div>
     </ng-template>
+
+    <!-- Modal de confirmación para odontograma -->
+    <div class="modal-backdrop" *ngIf="showModal" (click)="cerrarModal()">
+        <div class="modal-container" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Confirmar Acción</h2>
+                <button class="btn-close" (click)="cerrarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: 700; color: #1e3a5f; margin-bottom: 0.5rem;">
+                    {{ getToothName(modalDiente) }}
+                </p>
+                <p style="color: #64748b; margin-bottom: 1rem;">
+                    Sección: {{ getSectionName(modalDiente, modalSeccion) }}
+                </p>
+
+                <div class="color-preview" [style.background]="modalColor === 'erase' ? 'white' : colors[modalColor]">
+                    <span *ngIf="modalColor === 'erase'">Borrado</span>
+                </div>
+
+                <div class="note-section" style="margin-top: 1.5rem; text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">
+                        Observaciones para este diente:
+                    </label>
+                    <textarea [(ngModel)]="modalNote" class="form-control" rows="3"
+                        placeholder="Añadir detalles específicos de este diente..."
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; resize: vertical;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-delete" (click)="eliminarCambio()">Eliminar</button>
+                <button type="button" class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn-save" (click)="guardarCambio()">Guardar</button>
+            </div>
+        </div>
+    </div>
 </div>

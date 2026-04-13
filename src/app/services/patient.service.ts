@@ -20,7 +20,9 @@ export interface Tratamiento {
 
 export interface ToothState {
   sections: { [key: string]: string }; // section index -> hex color
+  sectionNotes?: { [key: string]: string }; // section index -> note
   absent: boolean;
+  note?: string;
 }
 
 export interface OdontogramData {
