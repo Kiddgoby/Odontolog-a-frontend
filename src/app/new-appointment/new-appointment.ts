@@ -39,11 +39,43 @@ export class NewAppointment implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.treatmentService.getTratamientos().subscribe({
+      next: (treatments) => {
+        this.allTreatments = treatments;
+      },
+      error: (err) => {
+        console.error('Error cargando tratamientos para citas:', err);
+      }
+    });
+
+
     this.loadData();
+
     if (this.initialDate) {
       this.appointmentData.fecha = this.initialDate;
     }
   }
+
+
+  onTreatmentInput(): void {
+    if (this.appointmentData.tratamiento) {
+      const search = this.appointmentData.tratamiento.toLowerCase();
+      this.filteredTreatments = this.allTreatments.filter(t => {
+        const nombre = (t as any).nombre || t.name || t.treatmentName || '';
+        return nombre.toLowerCase().includes(search);
+      });
+      this.showSuggestions = this.filteredTreatments.length > 0;
+    } else {
+      this.filteredTreatments = [];
+      this.showSuggestions = false;
+    }
+  }
+
+  selectTreatment(treatment: Tratamiento): void {
+    const nombre = (treatment as any).nombre || treatment.name || treatment.treatmentName || '';
+    this.appointmentData.tratamiento = nombre;
+    this.showSuggestions = false;
 
   loadData(): void {
     this.patientService.getPatients().subscribe(data => this.patients = data);
