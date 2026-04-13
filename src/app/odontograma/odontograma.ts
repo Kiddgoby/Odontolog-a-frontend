@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { PatientService, OdontogramData, ToothState } from '../services/patient.
     templateUrl: './odontograma.html',
     styleUrl: './odontograma.css'
 })
-export class Odontograma implements OnInit {
+export class Odontograma implements OnInit, OnDestroy {
     @Input() patientId?: number;
     @Input() initialData?: OdontogramData;
     @Output() dataChange = new EventEmitter<OdontogramData>();
@@ -60,7 +60,8 @@ export class Odontograma implements OnInit {
                     if (patient.odontogram) {
                         this.odontogramData = JSON.parse(JSON.stringify(patient.odontogram));
                     }
-                    if (!this.odontogramData.teeth) {
+                    // Asegurar que 'teeth' sea un objeto y no un array (problema de serialización PHP/JSON)
+                    if (!this.odontogramData.teeth || Array.isArray(this.odontogramData.teeth)) {
                         this.odontogramData.teeth = {};
                     }
                 }
@@ -72,6 +73,10 @@ export class Odontograma implements OnInit {
         if (!this.odontogramData.teeth) {
             this.odontogramData.teeth = {};
         }
+    }
+
+    ngOnDestroy(): void {
+        this.saveFinal();
     }
 
     selectColor(color: string): void {
@@ -88,6 +93,10 @@ export class Odontograma implements OnInit {
     getToothState(numero: number): ToothState {
         if (!this.odontogramData.teeth[numero]) {
             this.odontogramData.teeth[numero] = { sections: {}, absent: false };
+        }
+        // Asegurar que 'sections' sea un objeto y no un array (problema de serialización PHP/JSON)
+        if (Array.isArray(this.odontogramData.teeth[numero].sections)) {
+            this.odontogramData.teeth[numero].sections = {};
         }
         return this.odontogramData.teeth[numero];
     }
@@ -115,6 +124,12 @@ export class Odontograma implements OnInit {
         this.dataChange.emit(this.odontogramData);
     }
 
+    saveFinal(): void {
+        if (this.patientId) {
+            this.patientService.saveOdontogramImmediately(this.patientId, this.odontogramData).subscribe();
+        }
+    }
+
     getSectionFill(numero: number, sectionIndex: string): string {
         const tooth = this.odontogramData.teeth[numero];
         if (tooth && tooth.sections[sectionIndex]) {
@@ -124,6 +139,7 @@ export class Odontograma implements OnInit {
     }
 
     goBack(): void {
+        this.saveFinal();
         if (this.patientId) {
             this.router.navigate(['/patient', this.patientId]);
         } else {
