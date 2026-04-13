@@ -55,6 +55,15 @@ export class TreatmentService {
         }
         console.warn('TreatmentService: respuesta GET no es array ni { data: array }.', response);
         return [];
+        const rawArray = Array.isArray(response) ? response : (response?.data ?? []);
+        return rawArray.map((raw: any) => ({
+          id: raw.id,
+          nombre: raw.treatmentName || raw.nombre,
+          descripcion: raw.description,
+          categoria: raw.categoria || 'Dental',
+          duracion: raw.duracion || 30,
+          precio: raw.precio || 0
+        }));
       }),
       catchError(error => {
         console.error('TreatmentService: error en getTratamientos', error);
@@ -88,5 +97,28 @@ export class TreatmentService {
         return throwError(() => error);
       })
     );
+    const payload = {
+      treatmentName: tratamiento.nombre,
+      description: tratamiento.descripcion,
+      categoria: tratamiento.categoria,
+      duracion: tratamiento.duracion,
+      precio: tratamiento.precio
+    };
+    return this.http.post<Tratamiento>(this.apiUrl, payload);
+  }
+
+  updateTratamiento(tratamiento: Tratamiento): Observable<Tratamiento> {
+    const payload = {
+      treatmentName: tratamiento.nombre,
+      description: tratamiento.descripcion,
+      categoria: tratamiento.categoria,
+      duracion: tratamiento.duracion,
+      precio: tratamiento.precio
+    };
+    return this.http.put<Tratamiento>(`${this.apiUrl}/${tratamiento.id}`, payload);
+  }
+
+  deleteTratamiento(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

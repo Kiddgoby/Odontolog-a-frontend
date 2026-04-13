@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, throwError } from 'rxjs';
+import { Observable, catchError, map, throwError, Subject, debounceTime, switchMap, tap } from 'rxjs';
 
 export interface Cita {
   titulo: string;
@@ -55,14 +55,29 @@ export interface PatientData {
   providedIn: 'root'
 })
 export class PatientService {
-  // El backend de desarrollo de Django/Flask está en 8000, no 4200
   private apiUrl = 'http://localhost:8000/api/patients';
   private http = inject(HttpClient);
 
-  constructor() { }
+  // Subject para manejar las actualizaciones del odontograma con debounce
+  private odontogramUpdateSubject = new Subject<{ patientId: number, data: OdontogramData }>();
+
+  constructor() {
+    // Configurar el pipe para procesar las actualizaciones
+    this.odontogramUpdateSubject.pipe(
+      debounceTime(500), // Esperar 500ms de calma antes de enviar
+      switchMap(({ patientId, data }) =>
+        this.http.put<PatientData>(`${this.apiUrl}/${patientId}`, { odontogram: data }).pipe(
+          tap(() => console.log(`Odontograma guardado correctamente para el paciente ${patientId}`)),
+          catchError(error => {
+            console.error(`Error al guardar el odontograma para el paciente ${patientId}`, error);
+            return []; // Continuar aunque haya error
+          })
+        )
+      )
+    ).subscribe();
+  }
 
   getPatients(): Observable<PatientData[]> {
-    console.log(`PatientService: Realizando GET a ${this.apiUrl}`);
     return this.http.get<PatientData[] | { data: PatientData[] }>(this.apiUrl).pipe(
       map(response => {
         if (Array.isArray(response)) {
@@ -71,7 +86,6 @@ export class PatientService {
         if (response && 'data' in response && Array.isArray(response.data)) {
           return response.data;
         }
-        console.warn('PatientService: respuesta GET no es array ni {data: array}.', response);
         return [];
       }),
       catchError(error => {
@@ -86,18 +100,21 @@ export class PatientService {
   }
 
   addPatient(patient: any): Observable<PatientData> {
-    console.log(`PatientService: Realizando POST a ${this.apiUrl}`, patient);
     return this.http.post<PatientData>(this.apiUrl, patient);
   }
 
   updateOdontogram(patientId: number, data: OdontogramData): void {
-    this.getPatientById(patientId).subscribe(patient => {
-      if (patient) {
-        patient.odontogram = data;
-        this.http.put<PatientData>(`${this.apiUrl}/${patientId}`, patient).subscribe(() => {
-          console.log(`Odontograma actualizado para el paciente ${patientId}`, data);
-        });
-      }
-    });
+    // En lugar de hacer el PUT directo, lo pasamos por el Subject
+    this.odontogramUpdateSubject.next({ patientId, data });
+  }
+
+  saveOdontogramImmediately(patientId: number, data: OdontogramData): Observable<PatientData> {
+    return this.http.put<PatientData>(`${this.apiUrl}/${patientId}`, { odontogram: data }).pipe(
+      tap(() => console.log(`Odontograma guardado inmediatamente para el paciente ${patientId}`)),
+      catchError(error => {
+        console.error(`Error al guardar inmediatamente el odontograma para el paciente ${patientId}`, error);
+        return throwError(() => error);
+      })
+    );
   }
 }
