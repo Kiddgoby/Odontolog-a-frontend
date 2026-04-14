@@ -21,6 +21,7 @@ export class Odontograma implements OnInit, OnDestroy {
 
     odontogramData: OdontogramData = { teeth: {} };
     patientName: string = '';
+    filterType: 'adult' | 'child' | 'combined' = 'combined';
 
     // Estado del modal de confirmación
     showModal: boolean = false;
@@ -91,6 +92,10 @@ export class Odontograma implements OnInit, OnDestroy {
         if (this.colors[color]) {
             this.selectedHex = this.colors[color];
         }
+    }
+
+    setFilter(type: 'adult' | 'child' | 'combined'): void {
+        this.filterType = type;
     }
 
     isAnterior(numero: number): boolean {
