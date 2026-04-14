@@ -13,20 +13,23 @@
         </select>
     </div>
 
+    <div *ngIf="loading" class="status loading">Cargando tratamientos desde el backend...</div>
+    <div *ngIf="error" class="status error">{{ error }}</div>
+
     <div class="treatments-grid">
         <div class="card" *ngFor="let t of tratamientosFiltrados">
             <div class="card-header">
-                <h3>{{ t.nombre }}</h3>
-                <span class="category-tag">{{ t.categoria }}</span>
+                <h3>{{ t.nombre || t.name || t.treatmentName }}</h3>
+                <span *ngIf="t.categoria" class="category-tag">{{ t.categoria }}</span>
             </div>
 
-            <p class="card-description">{{ t.descripcion }}</p>
+            <p class="card-description">{{ t.descripcion || t.description }}</p>
 
             <div class="card-footer">
-                <span class="duration-box">
+                <span *ngIf="t.duracion !== undefined" class="duration-box">
                     <i class="fa-regular fa-clock"></i> {{ t.duracion }} min
                 </span>
-                <span class="price-box">€{{ t.precio }}</span>
+                <span *ngIf="t.precio !== undefined" class="price-box">€{{ t.precio }}</span>
             </div>
 
             <div class="card-actions">
@@ -49,7 +52,7 @@
         <div class="modal-body">
             <form (submit)="guardar()" id="treatmentForm">
                 <div class="form-group">
-                    <label>Nombre del Servicio</label>
+                    <label>Nombre del Tratamiento</label>
                     <input type="text" [(ngModel)]="currentTratamiento.nombre" name="nombre" class="form-control"
                         required />
                 </div>

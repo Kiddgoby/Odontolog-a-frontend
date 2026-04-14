@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, map, throwError } from 'rxjs';
 
 export interface AppointmentData {
   id: number;
@@ -10,135 +12,129 @@ export interface AppointmentData {
   duracion: string;
   estado: 'confirmada' | 'pendiente' | 'completada';
   asistido: 'sí' | 'no' | 'pendiente';
+  patient_id?: number;
+  dentist_id?: number;
+  treatment_id?: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentService {
-  private appointments: AppointmentData[] = [
-    {
-      id: 1,
-      fecha: '4/2/2026',
-      hora: '09:00',
-      paciente: 'María García',
-      tratamiento: 'Limpieza dental',
-      doctor: 'Dr. Rodríguez',
-      duracion: '30 min',
-      estado: 'confirmada',
-      asistido: 'pendiente'
-    },
-    {
-      id: 2,
-      fecha: '4/2/2026',
-      hora: '10:30',
-      paciente: 'Carlos Fernández',
-      tratamiento: 'Ortodoncia - Revisión',
-      doctor: 'Dra. Martínez',
-      duracion: '45 min',
-      estado: 'confirmada',
-      asistido: 'pendiente'
-    },
-    {
-      id: 3,
-      fecha: '4/2/2026',
-      hora: '11:00',
-      paciente: 'Ana López',
-      tratamiento: 'Extracción',
-      doctor: 'Dr. Rodríguez',
-      duracion: '60 min',
-      estado: 'pendiente',
-      asistido: 'pendiente'
-    },
-    {
-      id: 4,
-      fecha: '5/2/2026',
-      hora: '14:00',
-      paciente: 'Juan Pérez',
-      tratamiento: 'Implante dental',
-      doctor: 'Dr. Sánchez',
-      duracion: '90 min',
-      estado: 'confirmada',
-      asistido: 'pendiente'
-    },
-    {
-      id: 5,
-      fecha: '5/2/2026',
-      hora: '15:30',
-      paciente: 'Laura Ruiz',
-      tratamiento: 'Blanqueamiento',
-      doctor: 'Dra. Martínez',
-      duracion: '60 min',
-      estado: 'pendiente',
-      asistido: 'pendiente'
-    },
-    {
-      id: 6,
-      fecha: '6/2/2026',
-      hora: '09:30',
-      paciente: 'Pedro Sánchez',
-      tratamiento: 'Revisión general',
-      doctor: 'Dr. Rodríguez',
-      duracion: '30 min',
-      estado: 'confirmada',
-      asistido: 'pendiente'
-    },
-    {
-      id: 7,
-      fecha: '6/2/2026',
-      hora: '11:00',
-      paciente: 'Isabel Torres',
-      tratamiento: 'Endodoncia',
-      doctor: 'Dr. Sánchez',
-      duracion: '120 min',
-      estado: 'confirmada',
-      asistido: 'pendiente'
-    }
-  ];
+  private apiUrl = 'http://localhost:8000/api/appointments';
+  private http = inject(HttpClient);
 
   constructor() { }
 
-  getAppointments(): AppointmentData[] {
-    return this.appointments;
-  }
-
-  updateAppointmentStatus(id: number, status: 'confirmada' | 'pendiente' | 'completada'): void {
-    const appointment = this.appointments.find(a => a.id === id);
-    if (appointment) {
-      appointment.estado = status;
+  private getDataArray(response: AppointmentData[] | { data: AppointmentData[] }): AppointmentData[] {
+    if (Array.isArray(response)) {
+      return response;
     }
+    if (response && 'data' in response && Array.isArray(response.data)) {
+      return response.data;
+    }
+    return [];
   }
 
-  addAppointment(data: Omit<AppointmentData, 'id' | 'estado' | 'asistido' | 'duracion'>): void {
-    const newId = this.appointments.length > 0 ? Math.max(...this.appointments.map(a => a.id)) + 1 : 1;
-    const newAppointment: AppointmentData = {
-      ...data,
-      id: newId,
+  getAppointments(): Observable<AppointmentData[]> {
+    console.log(`AppointmentService: GET ${this.apiUrl}`);
+    return this.http.get<any>(this.apiUrl).pipe(
+      map(response => {
+        const rawArray = Array.isArray(response) ? response : (response?.data ?? []);
+        return rawArray.map((item: any) => this.mapBackendAppointment(item));
+      }),
+      catchError(error => {
+        console.error('AppointmentService getAppointments error', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  private mapBackendAppointment(raw: any): AppointmentData {
+    const estadoRaw = (raw.estado || raw.status || 'pendiente').toString().toLowerCase();
+    const asistidoRaw = (raw.asistido || raw.attended || 'pendiente').toString().toLowerCase();
+
+    return {
+      id: Number(raw.id),
+      fecha: raw.fecha || raw.visitDate?.split('T')[0] || '',
+      hora: raw.hora || (raw.visitDate?.split('T')[1]?.substring(0, 5)) || '',
+      paciente: raw.patient_name || (raw.patient ? `${raw.patient.firstName} ${raw.patient.lastName}` : ''),
+      tratamiento: raw.treatment_name || (raw.treatment?.treatmentName) || raw.consultationReason || '',
+      doctor: raw.dentist_name || (raw.dentist ? `${raw.dentist.firstName} ${raw.dentist.lastName}` : ''),
+      duracion: raw.duration || raw.duracion || '30 min',
+      estado: estadoRaw === 'confirmado' || estadoRaw === 'confirmada' ? 'confirmada' : estadoRaw === 'completado' || estadoRaw === 'completada' ? 'completada' : 'pendiente',
+      asistido: asistidoRaw === 'si' || asistidoRaw === 'sí' ? 'sí' : asistidoRaw === 'no' ? 'no' : 'pendiente',
+      patient_id: raw.patient?.id || raw.patientId,
+      dentist_id: raw.dentist?.id || raw.dentistId,
+      treatment_id: raw.treatment?.id || raw.treatmentId
+    };
+  }
+
+  getAppointment(id: number): Observable<AppointmentData> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map(raw => this.mapBackendAppointment(raw)),
+      catchError(error => {
+        console.error('AppointmentService getAppointment error', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  addAppointment(data: any): Observable<AppointmentData> {
+    const payload = {
+      patientId: data.patient_id || data.patientId,
+      dentistId: data.dentist_id || data.dentistId,
+      treatmentId: data.treatment_id || data.treatmentId,
+      visitDate: data.fecha,
+      time: data.hora,
+      consultationReason: data.tratamiento,
       estado: 'pendiente',
       asistido: 'pendiente',
-      duracion: '30 min' // Default duration or could be passed
+      duracion: '30 min'
     };
-    this.appointments.push(newAppointment);
+    return this.http.post<any>(this.apiUrl, payload).pipe(
+      map(raw => this.mapBackendAppointment(raw)),
+      catchError(error => {
+        console.error('AppointmentService addAppointment error', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  deleteAppointment(id: number): void {
-    const index = this.appointments.findIndex(a => a.id === id);
-    if (index !== -1) {
-      this.appointments.splice(index, 1);
-    }
+  updateAppointmentStatus(id: number, status: 'confirmada' | 'pendiente' | 'completada'): Observable<AppointmentData> {
+    return this.http.patch<AppointmentData>(`${this.apiUrl}/${id}`, { estado: status }).pipe(
+      catchError(error => {
+        console.error('AppointmentService updateAppointmentStatus error', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  updateAppointmentTime(id: number, time: string): void {
-    const appointment = this.appointments.find(a => a.id === id);
-    if (appointment) {
-      appointment.hora = time;
-    }
+  updateAppointmentTime(id: number, time: string): Observable<AppointmentData> {
+    return this.http.patch<AppointmentData>(`${this.apiUrl}/${id}`, { hora: time }).pipe(
+      catchError(error => {
+        console.error('AppointmentService updateAppointmentTime error', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  updateAppointmentAttendance(id: number, asistido: 'sí' | 'no' | 'pendiente'): void {
-    const appointment = this.appointments.find(a => a.id === id);
-    if (appointment) {
-      appointment.asistido = asistido;
-    }
+  updateAppointmentAttendance(id: number, asistido: 'sí' | 'no' | 'pendiente'): Observable<AppointmentData> {
+    return this.http.patch<AppointmentData>(`${this.apiUrl}/${id}`, { asistido }).pipe(
+      catchError(error => {
+        console.error('AppointmentService updateAppointmentAttendance error', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  deleteAppointment(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(error => {
+        console.error('AppointmentService deleteAppointment error', error);
+        return throwError(() => error);
+      })
+    );
   }
 }
+
