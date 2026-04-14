@@ -8,6 +8,12 @@
         </div>
     </div>
 
+    <div class="filter-controls">
+        <button [class.active]="filterType === 'adult'" (click)="setFilter('adult')">Adulto</button>
+        <button [class.active]="filterType === 'child'" (click)="setFilter('child')">Niño</button>
+        <button [class.active]="filterType === 'combined'" (click)="setFilter('combined')">Combinado</button>
+    </div>
+
     <div id="colores">
         <div class="color-btn" [class.color-seleccionado]="colorActual === 'red'" (click)="selectColor('red')"
             style="background:#ff4d4d;" title="Pendiente"></div>
@@ -32,12 +38,12 @@
 
     <div class="odontograma-wrapper" id="odontograma">
         <div class="quadrant q-ul">
-            <div class="quadrant-row row-top">
+            <div class="quadrant-row row-top" *ngIf="filterType === 'adult' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q1.adults">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
             </div>
-            <div class="quadrant-row row-top">
+            <div class="quadrant-row row-top" *ngIf="filterType === 'child' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q1.temporals">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
@@ -45,12 +51,12 @@
         </div>
 
         <div class="quadrant q-ur">
-            <div class="quadrant-row row-top">
+            <div class="quadrant-row row-top" *ngIf="filterType === 'adult' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q2.adults">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
             </div>
-            <div class="quadrant-row row-top">
+            <div class="quadrant-row row-top" *ngIf="filterType === 'child' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q2.temporals">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
@@ -58,12 +64,12 @@
         </div>
 
         <div class="quadrant q-ll">
-            <div class="quadrant-row row-bottom">
+            <div class="quadrant-row row-bottom" *ngIf="filterType === 'child' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q4.temporals">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
             </div>
-            <div class="quadrant-row row-bottom">
+            <div class="quadrant-row row-bottom" *ngIf="filterType === 'adult' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q4.adults">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
@@ -71,12 +77,12 @@
         </div>
 
         <div class="quadrant q-lr">
-            <div class="quadrant-row row-bottom">
+            <div class="quadrant-row row-bottom" *ngIf="filterType === 'child' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q3.temporals">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
             </div>
-            <div class="quadrant-row row-bottom">
+            <div class="quadrant-row row-bottom" *ngIf="filterType === 'adult' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q3.adults">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
