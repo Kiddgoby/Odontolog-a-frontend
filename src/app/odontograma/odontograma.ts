@@ -132,6 +132,24 @@ export class Odontograma implements OnInit, OnDestroy {
             tooth.sectionNotes = {};
         }
 
+        // Si hay una nota, la añadimos también a las notas generales del odontograma
+        if (this.modalNote && this.modalNote.trim() !== '') {
+            const toothName = this.getToothName(this.modalDiente);
+            const sectionName = this.getSectionName(this.modalDiente, this.modalSeccion);
+            const pathologyName = this.getPathologyName(this.modalColor);
+
+            // Solo añadir si la nota ha cambiado o es nueva para esta sección
+            if (tooth.sectionNotes[this.modalSeccion] !== this.modalNote) {
+                const newNoteEntry = `${toothName} (${sectionName}) - ${pathologyName}: ${this.modalNote}`;
+
+                if (!this.odontogramData.notes) {
+                    this.odontogramData.notes = newNoteEntry;
+                } else {
+                    this.odontogramData.notes += `\n${newNoteEntry}`;
+                }
+            }
+        }
+
         // Guardar nota específica para la sección
         tooth.sectionNotes[this.modalSeccion] = this.modalNote;
 
@@ -218,6 +236,18 @@ export class Odontograma implements OnInit, OnDestroy {
             s5: 'Centro (Oclusal)'
         };
         return sectionNames[section] || section;
+    }
+
+    getPathologyName(colorKey: string): string {
+        const names: { [key: string]: string } = {
+            red: 'Pendiente',
+            blue: 'Realizado',
+            green: 'Caries',
+            yellow: 'Sellado',
+            black: 'Ausencia',
+            erase: 'Borrado'
+        };
+        return names[colorKey] || colorKey;
     }
 
     goBack(): void {
