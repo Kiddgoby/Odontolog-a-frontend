@@ -29,13 +29,19 @@ export class Odontograma implements OnInit, OnDestroy {
     modalSeccion: string = '';
     modalColor: string = '';
     modalNote: string = '';
+    modalPathology: string = 'caries';
+
 
     colors: { [key: string]: string } = {
+
         red: "#ff4d4d",
         blue: "#4d79ff",
-        green: "#4dff88",
-        yellow: "#ffff4d",
         black: "#000"
+    };
+
+    pathologyColors: { [key: string]: string } = {
+        caries: "#4dff88",
+        sellado: "#ffff4d"
     };
 
     quadrants = {
@@ -54,6 +60,10 @@ export class Odontograma implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
+        this.loadInitialData();
+    }
+
+    loadInitialData(): void {
         if (!this.patientId) {
             const idFromRoute = this.route.snapshot.paramMap.get('id');
             if (idFromRoute) {
@@ -114,6 +124,16 @@ export class Odontograma implements OnInit, OnDestroy {
     }
 
     onSectionClick(numero: number, sectionIndex: string): void {
+        // Si el color actual es 'erase', borrar directamente sin mostrar el modal
+        if (this.colorActual === 'erase') {
+            const tooth = this.getToothState(numero);
+            delete tooth.sections[sectionIndex];
+            if (tooth.sectionNotes) delete tooth.sectionNotes[sectionIndex];
+            tooth.absent = false;
+            this.saveChanges();
+            return;
+        }
+
         const tooth = this.getToothState(numero);
         this.modalDiente = numero;
         this.modalSeccion = sectionIndex;
@@ -121,6 +141,10 @@ export class Odontograma implements OnInit, OnDestroy {
 
         // Cargar nota específica de la sección si existe
         this.modalNote = (tooth.sectionNotes && tooth.sectionNotes[sectionIndex]) || '';
+
+        // Para colores rojo y azul, cargar el tipo de patología
+        this.modalPathology = (tooth.pathologyTypes && tooth.pathologyTypes[sectionIndex]) || 'caries';
+
         this.showModal = true;
     }
 
@@ -136,7 +160,7 @@ export class Odontograma implements OnInit, OnDestroy {
         if (this.modalNote && this.modalNote.trim() !== '') {
             const toothName = this.getToothName(this.modalDiente);
             const sectionName = this.getSectionName(this.modalDiente, this.modalSeccion);
-            const pathologyName = this.getPathologyName(this.modalColor);
+            const pathologyName = this.getPathologyName(this.modalColor, this.modalPathology);
 
             // Solo añadir si la nota ha cambiado o es nueva para esta sección
             if (tooth.sectionNotes[this.modalSeccion] !== this.modalNote) {
@@ -158,9 +182,23 @@ export class Odontograma implements OnInit, OnDestroy {
         } else if (this.modalColor === 'erase') {
             delete tooth.sections[this.modalSeccion];
             if (tooth.sectionNotes) delete tooth.sectionNotes[this.modalSeccion];
+            if (tooth.pathologyTypes) delete tooth.pathologyTypes[this.modalSeccion];
             tooth.absent = false;
         } else {
-            tooth.sections[this.modalSeccion] = this.colors[this.modalColor];
+            let finalColor = this.colors[this.modalColor];
+            
+            // Para rojo y azul, aplicar el color de la patología si existe
+            if (this.modalColor === 'red' || this.modalColor === 'blue') {
+                if (!tooth.pathologyTypes) tooth.pathologyTypes = {};
+                tooth.pathologyTypes[this.modalSeccion] = this.modalPathology;
+                
+                // Si hay color específico para la patología lo usamos
+                if (this.pathologyColors[this.modalPathology]) {
+                    finalColor = this.pathologyColors[this.modalPathology];
+                }
+            }
+            
+            tooth.sections[this.modalSeccion] = finalColor;
             tooth.absent = false;
         }
 
@@ -172,6 +210,7 @@ export class Odontograma implements OnInit, OnDestroy {
         const tooth = this.getToothState(this.modalDiente);
         delete tooth.sections[this.modalSeccion];
         if (tooth.sectionNotes) delete tooth.sectionNotes[this.modalSeccion];
+        if (tooth.pathologyTypes) delete tooth.pathologyTypes[this.modalSeccion];
         tooth.absent = false;
         this.saveChanges();
         this.cerrarModal();
@@ -238,15 +277,23 @@ export class Odontograma implements OnInit, OnDestroy {
         return sectionNames[section] || section;
     }
 
-    getPathologyName(colorKey: string): string {
+    getPathologyName(colorKey: string, pathologyType?: string): string {
         const names: { [key: string]: string } = {
             red: 'Pendiente',
             blue: 'Realizado',
-            green: 'Caries',
-            yellow: 'Sellado',
             black: 'Ausencia',
             erase: 'Borrado'
         };
+        
+        // Si hay un tipo de patología, devolver el nombre combinado
+        if (pathologyType) {
+            const pathologyNames: { [key: string]: string } = {
+                caries: 'Caries',
+                sellado: 'Sellado'
+            };
+            return `${names[colorKey]} - ${pathologyNames[pathologyType]}`;
+        }
+        
         return names[colorKey] || colorKey;
     }
 
