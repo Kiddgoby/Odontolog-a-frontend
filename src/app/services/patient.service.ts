@@ -10,6 +10,14 @@ export interface Cita {
   estado: string;
 }
 
+export interface ToothState {
+  sections: { [key: string]: string }; // section index -> hex color
+  sectionNotes?: { [key: string]: string }; // section index -> note
+  pathologyTypes?: { [key: string]: string }; // section index -> pathology type
+  absent: boolean;
+  note?: string;
+}
+
 export interface Tratamiento {
   titulo: string;
   precio: number;
@@ -17,14 +25,6 @@ export interface Tratamiento {
   doctor: string;
   descripcion: string;
 }
-
-export interface ToothState {
-  sections: { [key: string]: string }; // section index -> hex color
-  sectionNotes?: { [key: string]: string }; // section index -> note
-  absent: boolean;
-  note?: string;
-}
-
 export interface OdontogramData {
   notes?: string;
   teeth: { [toothNumber: number]: ToothState };
@@ -59,6 +59,7 @@ export interface PatientData {
 export class PatientService {
   private apiUrl = 'http://localhost:8000/api/patients';
   private http = inject(HttpClient);
+
 
   // Subject para manejar las actualizaciones del odontograma con debounce
   private odontogramUpdateSubject = new Subject<{ patientId: number, data: OdontogramData }>();

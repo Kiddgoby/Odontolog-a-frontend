@@ -19,10 +19,6 @@
             style="background:#ff4d4d;" title="Pendiente"></div>
         <div class="color-btn" [class.color-seleccionado]="colorActual === 'blue'" (click)="selectColor('blue')"
             style="background:#4d79ff;" title="Realizado"></div>
-        <div class="color-btn" [class.color-seleccionado]="colorActual === 'green'" (click)="selectColor('green')"
-            style="background:#4dff88;" title="Caries"></div>
-        <div class="color-btn" [class.color-seleccionado]="colorActual === 'yellow'" (click)="selectColor('yellow')"
-            style="background:#ffff4d;" title="Sellado"></div>
         <div class="color-btn" [class.color-seleccionado]="colorActual === 'black'" (click)="selectColor('black')"
             style="background:#000;" title="Ausencia (X)"></div>
         <div class="color-btn" [class.color-seleccionado]="colorActual === 'erase'" (click)="selectColor('erase')"
@@ -147,6 +143,21 @@
                 <div class="color-preview" [style.background]="modalColor === 'erase' ? 'white' : colors[modalColor]">
                     <span *ngIf="modalColor === 'erase'">Borrado</span>
                 </div>
+
+                <div class="pathology-section" *ngIf="modalColor === 'red' || modalColor === 'blue'" style="margin-top: 1.5rem; text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">
+                        Tipo de patología:
+                    </label>
+                    <select [(ngModel)]="modalPathology" class="form-control" 
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 1rem;">
+                        <option value="" disabled selected>Seleccionar tipo de patología...</option>
+                        <option value="caries">Caries</option>
+                        <option value="sellado">Sellado</option>
+                    </select>
+                </div>
+
+
 
                 <div class="note-section" style="margin-top: 1.5rem; text-align: left;">
                     <label
