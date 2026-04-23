@@ -65,9 +65,15 @@ export class TreatmentService {
   }
 
   deleteTratamiento(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    const deleteUrl = `${this.apiUrl}/${id}`;
+    console.log(`TreatmentService: DELETE ${deleteUrl}`);
+    return this.http.delete<void>(deleteUrl).pipe(
+      map(() => {
+        console.log(`TreatmentService: Tratamiento ${id} eliminado exitosamente`);
+        return;
+      }),
       catchError(error => {
-        console.error('TreatmentService: error en deleteTratamiento', error);
+        console.error(`TreatmentService: error en deleteTratamiento para id=${id}`, error);
         return throwError(() => error);
       })
     );

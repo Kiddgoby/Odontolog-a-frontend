@@ -31,7 +31,7 @@ export class NewAppointment implements OnInit {
   doctors: DentistData[] = [];
   allTreatments: Tratamiento[] = [];
   filteredTreatments: Tratamiento[] = [];
-  showSuggestions = false;
+  showSuggestions: boolean = false;
 
   constructor(
     private appointmentService: AppointmentService,
@@ -81,17 +81,24 @@ export class NewAppointment implements OnInit {
   }
 
   loadData(): void {
-    this.patientService.getPatients().subscribe(data => this.patients = data);
-    this.dentistService.getDentists().subscribe(data => this.doctors = data);
-    this.treatmentService.getTratamientos().subscribe(data => this.allTreatments = data);
+    this.patientService.getPatients().subscribe((data: PatientData[]) => {
+      this.patients = data;
+    });
+    this.dentistService.getDentists().subscribe((data: DentistData[]) => {
+      this.doctors = data;
+    });
+    this.treatmentService.getTratamientos().subscribe((data: Tratamiento[]) => {
+      this.allTreatments = data;
+    });
   }
 
-  onTreatmentChange(event: any): void {
-    const treatmentId = Number(event.target.value);
+  onTreatmentChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const treatmentId = Number(target.value);
     const treatment = this.allTreatments.find(t => t.id === treatmentId);
     if (treatment) {
       this.appointmentData.treatment_id = treatment.id;
-      this.appointmentData.tratamiento = (treatment.nombre || treatment.name || treatment.treatmentName || '');
+      this.appointmentData.tratamiento = (treatment as any).nombre || treatment.name || '';
     }
   }
 
