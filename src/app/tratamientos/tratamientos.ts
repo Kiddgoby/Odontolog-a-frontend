@@ -125,12 +125,21 @@ export class Tratamientos implements OnInit {
   }
 
   eliminar(id: number) {
+    if (!id || id === 0) {
+      alert('Error: ID de tratamiento no válido');
+      return;
+    }
+    
     if (confirm('¿Estás seguro de que deseas eliminar este tratamiento?')) {
+      console.log(`Eliminando tratamiento con id: ${id}`);
       this.treatmentService.deleteTratamiento(id).subscribe({
-        next: () => this.cargarTratamientos(),
+        next: () => {
+          console.log(`Tratamiento ${id} eliminado. Recargando lista...`);
+          this.cargarTratamientos();
+        },
         error: err => {
           console.error('Error eliminando tratamiento:', err);
-          this.error = 'No se pudo eliminar el tratamiento en el backend.';
+          this.error = `Error al eliminar: ${err.error?.message || err.message || 'Intenta de nuevo'}`;
         }
       });
     }

@@ -42,16 +42,19 @@ export class LoginComponent {
     }
 
     this.isLoading = true;
-    const { email, password } = this.loginForm.value;
+    this.loginForm.disable();
+    const { email, password } = this.loginForm.getRawValue();
 
     this.authService.login(email, password).subscribe({
       next: (response) => {
         this.isLoading = false;
+        this.loginForm.enable();
         console.log('Login exitoso:', response.role);
         this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading = false;
+        this.loginForm.enable();
         console.error('Error en login:', error);
         this.errorMessage = error.error?.message || 'Correo o contraseña incorrectos.';
       }
