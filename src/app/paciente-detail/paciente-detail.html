@@ -9,7 +9,7 @@
     <div class="header-main">
       <div class="patient-title">
         <h1>{{ patient.firstName }} {{ patient.lastName }}</h1>
-        <p>{{ patient.edad || '-' }} años</p>
+        <p>{{ patient.age || '-' }} años</p>
       </div>
       <button class="btn-edit">Editar Paciente</button>
     </div>
@@ -128,7 +128,7 @@
   <!-- New Appointment Popup -->
   <div class="modal-overlay" *ngIf="isNewAppointmentModalOpen" (click)="closeNewAppointmentModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
-      <app-new-appointment (close)="closeNewAppointmentModal()"
+      <app-new-appointment [patientId]="patient.id" (close)="closeNewAppointmentModal()"
         (created)="closeNewAppointmentModal()"></app-new-appointment>
     </div>
   </div>

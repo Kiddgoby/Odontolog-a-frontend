@@ -81,17 +81,24 @@ export class AppointmentService {
   }
 
   addAppointment(data: any): Observable<AppointmentData> {
+    // Combine fecha and hora into visitDate format expected by Symfony (\DateTime)
+    // Format: YYYY-MM-DD HH:mm:ss
+    const visitDateStr = `${data.fecha} ${data.hora}:00`;
+
     const payload = {
       patientId: data.patient_id || data.patientId,
       dentistId: data.dentist_id || data.dentistId,
       treatmentId: data.treatment_id || data.treatmentId,
-      visitDate: data.fecha,
-      time: data.hora,
+      boxId: 1, // Defaulting to 1 as it's required by backend but not in UI yet
+      visitDate: visitDateStr,
       consultationReason: data.tratamiento,
       estado: 'pendiente',
       asistido: 'pendiente',
       duracion: '30 min'
     };
+    
+    console.log('AppointmentService: sending payload', payload);
+
     return this.http.post<any>(this.apiUrl, payload).pipe(
       map(raw => this.mapBackendAppointment(raw)),
       catchError(error => {

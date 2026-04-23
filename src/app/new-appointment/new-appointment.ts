@@ -15,6 +15,7 @@ import { DentistService, DentistData } from '../services/dentist.service';
 })
 export class NewAppointment implements OnInit {
   @Input() initialDate: string = '';
+  @Input() patientId: number | null = null;
   @Output() close = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
 
@@ -57,6 +58,9 @@ export class NewAppointment implements OnInit {
     if (this.initialDate) {
       this.appointmentData.fecha = this.initialDate;
     }
+    if (this.patientId) {
+      this.appointmentData.patient_id = this.patientId;
+    }
   }
 
 
@@ -96,7 +100,11 @@ export class NewAppointment implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.appointmentData.patient_id && this.appointmentData.dentist_id && this.appointmentData.fecha && this.appointmentData.hora) {
+    if (this.appointmentData.patient_id && 
+        this.appointmentData.dentist_id && 
+        this.appointmentData.fecha && 
+        this.appointmentData.hora &&
+        this.appointmentData.treatment_id) {
       this.appointmentService.addAppointment(this.appointmentData).subscribe({
         next: () => {
           this.created.emit();
