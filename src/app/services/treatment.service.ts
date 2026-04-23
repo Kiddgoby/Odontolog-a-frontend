@@ -103,28 +103,5 @@ export class TreatmentService {
         return throwError(() => error);
       })
     );
-    const payload = {
-      treatmentName: tratamiento.nombre,
-      description: tratamiento.descripcion,
-      categoria: tratamiento.categoria,
-      duracion: tratamiento.duracion,
-      precio: tratamiento.precio
-    };
-    return this.http.post<Tratamiento>(this.apiUrl, payload);
-  }
-
-  updateTratamiento(tratamiento: Tratamiento): Observable<Tratamiento> {
-    const payload = {
-      treatmentName: tratamiento.nombre,
-      description: tratamiento.descripcion,
-      categoria: tratamiento.categoria,
-      duracion: tratamiento.duracion,
-      precio: tratamiento.precio
-    };
-    return this.http.put<Tratamiento>(`${this.apiUrl}/${tratamiento.id}`, payload);
-  }
-
-  deleteTratamiento(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
