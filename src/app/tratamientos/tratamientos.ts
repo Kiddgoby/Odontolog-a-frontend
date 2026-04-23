@@ -34,12 +34,12 @@ export class Tratamientos implements OnInit {
     this.error = null;
 
     this.treatmentService.getTratamientos().subscribe({
-      next: data => {
+      next: (data) => {
         this.tratamientos = data;
         this.loading = false;
       },
-      error: err => {
-        console.error('Error cargando tratamientos:', err);
+      error: (err) => {
+        console.error('Error al cargar tratamientos:', err);
         this.error = 'No se pudieron cargar los tratamientos desde el backend.';
         this.loading = false;
       }
@@ -99,25 +99,20 @@ export class Tratamientos implements OnInit {
       precio: this.currentTratamiento.precio
     };
 
-    if (this.isEditing) {
-      this.treatmentService.updateTratamiento({ ...this.currentTratamiento, ...payload }).subscribe({
-        next: () => this.cargarTratamientos(),
-        error: err => {
-          console.error('Error actualizando tratamiento:', err);
-          this.error = 'No se pudo actualizar el tratamiento en el backend.';
-        }
-      });
-    } else {
-      this.treatmentService.addTratamiento(payload).subscribe({
-        next: () => this.cargarTratamientos(),
-        error: err => {
-          console.error('Error guardando tratamiento:', err);
-          this.error = 'No se pudo guardar el tratamiento en el backend.';
-        }
-      });
-    }
+    const operation = this.isEditing
+      ? this.treatmentService.updateTratamiento(this.currentTratamiento)
+      : this.treatmentService.addTratamiento(payload);
 
-    this.cerrarFormulario();
+    operation.subscribe({
+      next: () => {
+        this.cargarTratamientos();
+        this.cerrarFormulario();
+      },
+      error: (err) => {
+        console.error('Error al guardar el tratamiento:', err);
+        this.error = 'Hubo un error al guardar el tratamiento. Por favor, inténtelo de nuevo.';
+      }
+    });
   }
 
   editar(tratamiento: Tratamiento) {
@@ -137,8 +132,8 @@ export class Tratamientos implements OnInit {
           console.log(`Tratamiento ${id} eliminado. Recargando lista...`);
           this.cargarTratamientos();
         },
-        error: err => {
-          console.error('Error eliminando tratamiento:', err);
+        error: (err) => {
+          console.error('Error al eliminar el tratamiento:', err);
           this.error = `Error al eliminar: ${err.error?.message || err.message || 'Intenta de nuevo'}`;
         }
       });
