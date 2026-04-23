@@ -283,6 +283,19 @@
     cursor: pointer;
 }
 
+.btn-save:hover {
+    background: #1d4ed8;
+}
+
+.btn-delete {
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
 @keyframes modalIn {
     from {
         opacity: 0;

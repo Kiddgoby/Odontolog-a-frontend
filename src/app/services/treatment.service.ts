@@ -26,43 +26,17 @@ export class TreatmentService {
   getTratamientos(): Observable<Tratamiento[]> {
     return this.http.get<any>(this.apiUrl).pipe(
       map(response => {
-        if (Array.isArray(response)) {
-          // Mapear los campos del backend al formato esperado por el frontend
-          return response.map(item => ({
-            id: item.id,
-            name: item.name || item.treatmentName,
-            treatmentName: item.name || item.treatmentName,
-            description: item.description,
-            categoria: item.categoria || item.category,
-            duracion: item.duracion || item.duration,
-            precio: item.precio || item.price,
-            nombre: item.name || item.treatmentName,
-            descripcion: item.description  // alias para template
-          }));
-        }
-        if (response && 'data' in response && Array.isArray(response.data)) {
-          return response.data.map((item: any) => ({
-            id: item.id,
-            name: item.name || item.treatmentName,
-            treatmentName: item.name || item.treatmentName,
-            description: item.description,
-            categoria: item.categoria || item.category,
-            duracion: item.duracion || item.duration,
-            precio: item.precio || item.price,
-            nombre: item.name || item.treatmentName,
-            descripcion: item.description
-          }));
-        }
-        console.warn('TreatmentService: respuesta GET no es array ni { data: array }.', response);
-        return [];
         const rawArray = Array.isArray(response) ? response : (response?.data ?? []);
-        return rawArray.map((raw: any) => ({
-          id: raw.id,
-          nombre: raw.treatmentName || raw.nombre,
-          descripcion: raw.description,
-          categoria: raw.categoria || 'Dental',
-          duracion: raw.duracion || 30,
-          precio: raw.precio || 0
+        return rawArray.map((item: any) => ({
+          id: item.id,
+          name: item.name || item.treatmentName,
+          treatmentName: item.name || item.treatmentName,
+          description: item.description,
+          categoria: item.categoria || item.category,
+          duracion: item.duracion || item.duration,
+          precio: item.precio || item.price,
+          nombre: item.name || item.treatmentName,
+          descripcion: item.description
         }));
       }),
       catchError(error => {

@@ -21,13 +21,27 @@ export class Odontograma implements OnInit, OnDestroy {
 
     odontogramData: OdontogramData = { teeth: {} };
     patientName: string = '';
+    filterType: 'adult' | 'child' | 'combined' = 'combined';
+
+    // Estado del modal de confirmación
+    showModal: boolean = false;
+    modalDiente: number = 0;
+    modalSeccion: string = '';
+    modalColor: string = '';
+    modalNote: string = '';
+    modalPathology: string = 'caries';
+
 
     colors: { [key: string]: string } = {
+
         red: "#ff4d4d",
         blue: "#4d79ff",
-        green: "#4dff88",
-        yellow: "#ffff4d",
         black: "#000"
+    };
+
+    pathologyColors: { [key: string]: string } = {
+        caries: "#4dff88",
+        sellado: "#ffff4d"
     };
 
     quadrants = {
@@ -46,6 +60,10 @@ export class Odontograma implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
+        this.loadInitialData();
+    }
+
+    loadInitialData(): void {
         if (!this.patientId) {
             const idFromRoute = this.route.snapshot.paramMap.get('id');
             if (idFromRoute) {
@@ -86,6 +104,10 @@ export class Odontograma implements OnInit, OnDestroy {
         }
     }
 
+    setFilter(type: 'adult' | 'child' | 'combined'): void {
+        this.filterType = type;
+    }
+
     isAnterior(numero: number): boolean {
         return this.anteriorTeeth.includes(numero);
     }
@@ -102,19 +124,100 @@ export class Odontograma implements OnInit, OnDestroy {
     }
 
     onSectionClick(numero: number, sectionIndex: string): void {
-        const tooth = this.getToothState(numero);
-
-        if (this.colorActual === 'black') {
-            tooth.absent = !tooth.absent;
-        } else if (this.colorActual === 'erase') {
+        // Si el color actual es 'erase', borrar directamente sin mostrar el modal
+        if (this.colorActual === 'erase') {
+            const tooth = this.getToothState(numero);
             delete tooth.sections[sectionIndex];
+            if (tooth.sectionNotes) delete tooth.sectionNotes[sectionIndex];
+            tooth.absent = false;
+            this.saveChanges();
+            return;
+        }
+
+        const tooth = this.getToothState(numero);
+        this.modalDiente = numero;
+        this.modalSeccion = sectionIndex;
+        this.modalColor = this.colorActual;
+
+        // Cargar nota específica de la sección si existe
+        this.modalNote = (tooth.sectionNotes && tooth.sectionNotes[sectionIndex]) || '';
+
+        // Para colores rojo y azul, cargar el tipo de patología
+        this.modalPathology = (tooth.pathologyTypes && tooth.pathologyTypes[sectionIndex]) || 'caries';
+
+        this.showModal = true;
+    }
+
+    guardarCambio(): void {
+        const tooth = this.getToothState(this.modalDiente);
+
+        // Inicializar sectionNotes si no existe
+        if (!tooth.sectionNotes) {
+            tooth.sectionNotes = {};
+        }
+
+        // Si hay una nota, la añadimos también a las notas generales del odontograma
+        if (this.modalNote && this.modalNote.trim() !== '') {
+            const toothName = this.getToothName(this.modalDiente);
+            const sectionName = this.getSectionName(this.modalDiente, this.modalSeccion);
+            const pathologyName = this.getPathologyName(this.modalColor, this.modalPathology);
+
+            // Solo añadir si la nota ha cambiado o es nueva para esta sección
+            if (tooth.sectionNotes[this.modalSeccion] !== this.modalNote) {
+                const newNoteEntry = `${toothName} (${sectionName}) - ${pathologyName}: ${this.modalNote}`;
+
+                if (!this.odontogramData.notes) {
+                    this.odontogramData.notes = newNoteEntry;
+                } else {
+                    this.odontogramData.notes += `\n${newNoteEntry}`;
+                }
+            }
+        }
+
+        // Guardar nota específica para la sección
+        tooth.sectionNotes[this.modalSeccion] = this.modalNote;
+
+        if (this.modalColor === 'black') {
+            tooth.absent = !tooth.absent;
+        } else if (this.modalColor === 'erase') {
+            delete tooth.sections[this.modalSeccion];
+            if (tooth.sectionNotes) delete tooth.sectionNotes[this.modalSeccion];
+            if (tooth.pathologyTypes) delete tooth.pathologyTypes[this.modalSeccion];
             tooth.absent = false;
         } else {
-            tooth.sections[sectionIndex] = this.selectedHex;
+            let finalColor = this.colors[this.modalColor];
+            
+            // Para rojo y azul, aplicar el color de la patología si existe
+            if (this.modalColor === 'red' || this.modalColor === 'blue') {
+                if (!tooth.pathologyTypes) tooth.pathologyTypes = {};
+                tooth.pathologyTypes[this.modalSeccion] = this.modalPathology;
+                
+                // Si hay color específico para la patología lo usamos
+                if (this.pathologyColors[this.modalPathology]) {
+                    finalColor = this.pathologyColors[this.modalPathology];
+                }
+            }
+            
+            tooth.sections[this.modalSeccion] = finalColor;
             tooth.absent = false;
         }
 
         this.saveChanges();
+        this.cerrarModal();
+    }
+
+    eliminarCambio(): void {
+        const tooth = this.getToothState(this.modalDiente);
+        delete tooth.sections[this.modalSeccion];
+        if (tooth.sectionNotes) delete tooth.sectionNotes[this.modalSeccion];
+        if (tooth.pathologyTypes) delete tooth.pathologyTypes[this.modalSeccion];
+        tooth.absent = false;
+        this.saveChanges();
+        this.cerrarModal();
+    }
+
+    cerrarModal(): void {
+        this.showModal = false;
     }
 
     saveChanges(): void {
@@ -136,6 +239,62 @@ export class Odontograma implements OnInit, OnDestroy {
             return tooth.sections[sectionIndex];
         }
         return 'white';
+    }
+
+    getToothName(num: number): string {
+        const names: { [key: number]: string } = {
+            1: 'Incisivo Central',
+            2: 'Incisivo Lateral',
+            3: 'Canino',
+            4: 'Primer Premolar',
+            5: 'Segundo Premolar',
+            6: 'Primer Molar',
+            7: 'Segundo Molar',
+            8: 'Tercer Molar'
+        };
+        const n = num % 10;
+        const q = Math.floor(num / 10);
+        const toothBase = names[n] || 'Diente';
+
+        let location = '';
+        if (q === 1 || q === 5) location = 'Superior Derecho';
+        if (q === 2 || q === 6) location = 'Superior Izquierdo';
+        if (q === 3 || q === 7) location = 'Inferior Izquierdo';
+        if (q === 4 || q === 8) location = 'Inferior Derecho';
+
+        const type = (q > 4) ? 'Temporal ' : '';
+        return `${toothBase} ${type}${location}`;
+    }
+
+    getSectionName(num: number, section: string): string {
+        const sectionNames: { [key: string]: string } = {
+            s1: 'Superior (Vestibular)',
+            s2: 'Derecha',
+            s3: 'Inferior (Palatino/Lingual)',
+            s4: 'Izquierda',
+            s5: 'Centro (Oclusal)'
+        };
+        return sectionNames[section] || section;
+    }
+
+    getPathologyName(colorKey: string, pathologyType?: string): string {
+        const names: { [key: string]: string } = {
+            red: 'Pendiente',
+            blue: 'Realizado',
+            black: 'Ausencia',
+            erase: 'Borrado'
+        };
+        
+        // Si hay un tipo de patología, devolver el nombre combinado
+        if (pathologyType) {
+            const pathologyNames: { [key: string]: string } = {
+                caries: 'Caries',
+                sellado: 'Sellado'
+            };
+            return `${names[colorKey]} - ${pathologyNames[pathologyType]}`;
+        }
+        
+        return names[colorKey] || colorKey;
     }
 
     goBack(): void {

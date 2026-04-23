@@ -8,15 +8,17 @@
         </div>
     </div>
 
+    <div class="filter-controls">
+        <button [class.active]="filterType === 'adult'" (click)="setFilter('adult')">Adulto</button>
+        <button [class.active]="filterType === 'child'" (click)="setFilter('child')">Niño</button>
+        <button [class.active]="filterType === 'combined'" (click)="setFilter('combined')">Combinado</button>
+    </div>
+
     <div id="colores">
         <div class="color-btn" [class.color-seleccionado]="colorActual === 'red'" (click)="selectColor('red')"
             style="background:#ff4d4d;" title="Pendiente"></div>
         <div class="color-btn" [class.color-seleccionado]="colorActual === 'blue'" (click)="selectColor('blue')"
             style="background:#4d79ff;" title="Realizado"></div>
-        <div class="color-btn" [class.color-seleccionado]="colorActual === 'green'" (click)="selectColor('green')"
-            style="background:#4dff88;" title="Caries"></div>
-        <div class="color-btn" [class.color-seleccionado]="colorActual === 'yellow'" (click)="selectColor('yellow')"
-            style="background:#ffff4d;" title="Sellado"></div>
         <div class="color-btn" [class.color-seleccionado]="colorActual === 'black'" (click)="selectColor('black')"
             style="background:#000;" title="Ausencia (X)"></div>
         <div class="color-btn" [class.color-seleccionado]="colorActual === 'erase'" (click)="selectColor('erase')"
@@ -32,12 +34,12 @@
 
     <div class="odontograma-wrapper" id="odontograma">
         <div class="quadrant q-ul">
-            <div class="quadrant-row row-top">
+            <div class="quadrant-row row-top" *ngIf="filterType === 'adult' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q1.adults">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
             </div>
-            <div class="quadrant-row row-top">
+            <div class="quadrant-row row-top" *ngIf="filterType === 'child' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q1.temporals">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
@@ -45,12 +47,12 @@
         </div>
 
         <div class="quadrant q-ur">
-            <div class="quadrant-row row-top">
+            <div class="quadrant-row row-top" *ngIf="filterType === 'adult' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q2.adults">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
             </div>
-            <div class="quadrant-row row-top">
+            <div class="quadrant-row row-top" *ngIf="filterType === 'child' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q2.temporals">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
@@ -58,12 +60,12 @@
         </div>
 
         <div class="quadrant q-ll">
-            <div class="quadrant-row row-bottom">
+            <div class="quadrant-row row-bottom" *ngIf="filterType === 'child' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q4.temporals">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
             </div>
-            <div class="quadrant-row row-bottom">
+            <div class="quadrant-row row-bottom" *ngIf="filterType === 'adult' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q4.adults">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
@@ -71,12 +73,12 @@
         </div>
 
         <div class="quadrant q-lr">
-            <div class="quadrant-row row-bottom">
+            <div class="quadrant-row row-bottom" *ngIf="filterType === 'child' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q3.temporals">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
             </div>
-            <div class="quadrant-row row-bottom">
+            <div class="quadrant-row row-bottom" *ngIf="filterType === 'adult' || filterType === 'combined'">
                 <ng-container *ngFor="let num of quadrants.q3.adults">
                     <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
                 </ng-container>
@@ -122,4 +124,56 @@
             </div>
         </div>
     </ng-template>
+
+    <!-- Modal de confirmación para odontograma -->
+    <div class="modal-backdrop" *ngIf="showModal" (click)="cerrarModal()">
+        <div class="modal-container" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Confirmar Acción</h2>
+                <button class="btn-close" (click)="cerrarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: 700; color: #1e3a5f; margin-bottom: 0.5rem;">
+                    {{ getToothName(modalDiente) }}
+                </p>
+                <p style="color: #64748b; margin-bottom: 1rem;">
+                    Sección: {{ getSectionName(modalDiente, modalSeccion) }}
+                </p>
+
+                <div class="color-preview" [style.background]="modalColor === 'erase' ? 'white' : colors[modalColor]">
+                    <span *ngIf="modalColor === 'erase'">Borrado</span>
+                </div>
+
+                <div class="pathology-section" *ngIf="modalColor === 'red' || modalColor === 'blue'" style="margin-top: 1.5rem; text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">
+                        Tipo de patología:
+                    </label>
+                    <select [(ngModel)]="modalPathology" class="form-control" 
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 1rem;">
+                        <option value="" disabled selected>Seleccionar tipo de patología...</option>
+                        <option value="caries">Caries</option>
+                        <option value="sellado">Sellado</option>
+                    </select>
+                </div>
+
+
+
+                <div class="note-section" style="margin-top: 1.5rem; text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">
+                        Observaciones para este diente:
+                    </label>
+                    <textarea [(ngModel)]="modalNote" class="form-control" rows="3"
+                        placeholder="Añadir detalles específicos de este diente..."
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; resize: vertical;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-delete" (click)="eliminarCambio()">Eliminar</button>
+                <button type="button" class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn-save" (click)="guardarCambio()">Guardar</button>
+            </div>
+        </div>
+    </div>
 </div>
