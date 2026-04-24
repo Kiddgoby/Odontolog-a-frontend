@@ -165,12 +165,22 @@ tbody tr:hover {
   color: #2c3e50;
 }
 
-.time {
-  font-size: 0.85rem;
-  color: #7f8c8d;
-  display: flex;
+.time-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
+  padding: 0.25rem 0.6rem;
+  background-color: var(--primary-light, #eff6ff);
+  color: var(--primary-color, #2563eb);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid var(--primary-border, #bfdbfe);
+}
+
+.time-badge i {
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 .patient-info {

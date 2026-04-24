@@ -211,6 +211,13 @@
 .app-time {
     font-weight: 800;
     font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.app-time i {
+    font-size: 10px;
 }
 
 .app-patient {
