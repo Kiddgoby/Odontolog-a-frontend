@@ -12,6 +12,7 @@ export interface DentistData {
   email: string;
 }
 
+
 @Injectable({
   providedIn: 'root'
 })
