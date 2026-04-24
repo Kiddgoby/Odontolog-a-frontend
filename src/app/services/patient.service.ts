@@ -34,7 +34,8 @@ export interface PatientData {
   id: number;
   firstName: string;
   lastName: string;
-  edad?: number;
+  age?: number;
+  nationalId?: string;
   registrationDate?: string;
   phone: string;
   email: string;
