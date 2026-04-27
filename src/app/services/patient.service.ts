@@ -57,6 +57,16 @@ export interface PatientData {
   providedIn: 'root'
 })
 export class PatientService {
+  updateToothAbsence(patientId: number, modalDiente: number, absent: boolean): Observable<void> {
+      const url = `${this.apiUrl}/${patientId}/teeth/${modalDiente}/absence`;
+      return this.http.put<void>(url, { absent }).pipe(
+          tap(() => console.log(`Estado de ausencia actualizado para el diente ${modalDiente} del paciente ${patientId}`)),
+          catchError(error => {
+              console.error(`Error al actualizar el estado de ausencia para el diente ${modalDiente} del paciente ${patientId}`, error);
+              return throwError(() => error);
+          })
+      );
+  }
   private apiUrl = 'http://localhost:8000/api/patients';
   private http = inject(HttpClient);
 

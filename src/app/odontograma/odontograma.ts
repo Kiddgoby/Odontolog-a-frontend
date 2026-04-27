@@ -179,6 +179,11 @@ export class Odontograma implements OnInit, OnDestroy {
 
         if (this.modalColor === 'black') {
             tooth.absent = !tooth.absent;
+
+            // Enviar a la base de datos si el estado de ausencia cambia
+            if (this.patientId) {
+                this.patientService.updateToothAbsence(this.patientId, this.modalDiente, tooth.absent).subscribe();
+            }
         } else if (this.modalColor === 'erase') {
             delete tooth.sections[this.modalSeccion];
             if (tooth.sectionNotes) delete tooth.sectionNotes[this.modalSeccion];
