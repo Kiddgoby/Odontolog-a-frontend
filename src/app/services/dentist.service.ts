@@ -10,6 +10,10 @@ export interface DentistData {
   availableDays: string;
   phone: string;
   email: string;
+  boxId?: number;
+  box?: any;
+  treatmentId?: number;
+  treatment?: any;
 }
 
 
@@ -42,5 +46,23 @@ export class DentistService {
 
   getDentistById(id: number): Observable<DentistData> {
     return this.http.get<DentistData>(`${this.apiUrl}/${id}`);
+  }
+
+  getDentistTreatments(dentistId: number): Observable<any[]> {
+    return this.http.get<any>(`${this.apiUrl}/${dentistId}/treatments`).pipe(
+      map(response => {
+        if (Array.isArray(response)) {
+          return response;
+        }
+        if (response && 'data' in response && Array.isArray(response.data)) {
+          return response.data;
+        }
+        return [];
+      }),
+      catchError(error => {
+        console.error(`DentistService: error al obtener tratamientos del dentista ${dentistId}`, error);
+        return throwError(() => error);
+      })
+    );
   }
 }
