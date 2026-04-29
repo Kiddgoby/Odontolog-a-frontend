@@ -7,7 +7,7 @@
     <div class="modal-body">
       <div class="form-group">
         <label for="paciente">Nombre del Paciente</label>
-        <select id="paciente" name="paciente" [(ngModel)]="appointmentData.patient_id" required>
+        <select id="paciente" name="paciente" [(ngModel)]="appointmentData.patient_id" (ngModelChange)="onPatientChange($event)" required>
           <option [ngValue]="null" disabled>Seleccionar paciente</option>
           <option *ngFor="let patient of patients" [ngValue]="patient.id">
             {{ patient.firstName }} {{ patient.lastName }}
@@ -18,7 +18,7 @@
       <div class="form-row">
         <div class="form-group">
           <label for="doctor">Doctor</label>
-          <select id="doctor" name="doctor" [(ngModel)]="appointmentData.dentist_id" required>
+          <select id="doctor" name="doctor" [(ngModel)]="appointmentData.dentist_id" (ngModelChange)="onDoctorChange($event)" required>
             <option [ngValue]="null" disabled>Seleccionar doctor</option>
             <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
               {{ doctor.firstName }} {{ doctor.lastName }}
@@ -27,9 +27,9 @@
         </div>
         <div class="form-group">
           <label for="tratamiento">Tratamiento</label>
-          <select id="tratamiento" name="tratamiento" (change)="onTreatmentChange($event)" required>
-            <option value="" disabled selected>Seleccionar tratamiento</option>
-            <option *ngFor="let t of allTreatments" [value]="t.id">
+          <select id="tratamiento" name="tratamiento" [(ngModel)]="appointmentData.treatment_id" (ngModelChange)="onTreatmentChange($event)" required>
+            <option [ngValue]="null" disabled>Seleccionar tratamiento</option>
+            <option *ngFor="let t of filteredTreatments" [ngValue]="t.id">
               {{ t.nombre }}
             </option>
           </select>
@@ -45,6 +45,16 @@
           <label for="hora">Hora</label>
           <input type="time" id="hora" name="hora" [(ngModel)]="appointmentData.hora" required>
         </div>
+      </div>
+
+      <div class="form-group">
+        <label for="box">Consultorio (Box)</label>
+        <select id="box" name="box" [(ngModel)]="appointmentData.box_id" required>
+          <option [ngValue]="null" disabled>Seleccionar consultorio</option>
+          <option *ngFor="let box of boxes" [ngValue]="box.id">
+            {{ box.name || 'Consultorio ' + box.number }}
+          </option>
+        </select>
       </div>
     </div>
     <div class="modal-footer">

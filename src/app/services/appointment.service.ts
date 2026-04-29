@@ -9,12 +9,14 @@ export interface AppointmentData {
   paciente: string;
   tratamiento: string;
   doctor: string;
+  box?: string;
   duracion: string;
   estado: 'confirmada' | 'pendiente' | 'completada';
   asistido: 'sí' | 'no' | 'pendiente';
   patient_id?: number;
   dentist_id?: number;
   treatment_id?: number;
+  box_id?: number;
 }
 
 @Injectable({
@@ -61,12 +63,14 @@ export class AppointmentService {
       paciente: raw.patient_name || (raw.patient ? `${raw.patient.firstName} ${raw.patient.lastName}` : ''),
       tratamiento: raw.treatment_name || (raw.treatment?.treatmentName) || raw.consultationReason || '',
       doctor: raw.dentist_name || (raw.dentist ? `${raw.dentist.firstName} ${raw.dentist.lastName}` : ''),
+      box: raw.box_name || (raw.box?.name) || raw.box?.number || '',
       duracion: raw.duration || raw.duracion || '30 min',
       estado: estadoRaw === 'confirmado' || estadoRaw === 'confirmada' ? 'confirmada' : estadoRaw === 'completado' || estadoRaw === 'completada' ? 'completada' : 'pendiente',
       asistido: asistidoRaw === 'si' || asistidoRaw === 'sí' ? 'sí' : asistidoRaw === 'no' ? 'no' : 'pendiente',
       patient_id: raw.patient?.id || raw.patientId,
       dentist_id: raw.dentist?.id || raw.dentistId,
-      treatment_id: raw.treatment?.id || raw.treatmentId
+      treatment_id: raw.treatment?.id || raw.treatmentId,
+      box_id: raw.box?.id || raw.boxId
     };
   }
 
@@ -89,7 +93,7 @@ export class AppointmentService {
       patientId: data.patient_id || data.patientId,
       dentistId: data.dentist_id || data.dentistId,
       treatmentId: data.treatment_id || data.treatmentId,
-      boxId: 1, // Defaulting to 1 as it's required by backend but not in UI yet
+      boxId: data.box_id || data.boxId || 1,
       visitDate: visitDateStr,
       consultationReason: data.tratamiento,
       estado: 'pendiente',

@@ -52,6 +52,10 @@ export interface PatientData {
   tratamientos?: Tratamiento[];
   appointments?: any[]; // For the actual backend response
   odontogram?: OdontogramData;
+  boxId?: number;
+  box?: any;
+  treatmentId?: number;
+  treatment?: any;
 }
 
 @Injectable({
