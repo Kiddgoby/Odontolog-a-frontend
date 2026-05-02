@@ -285,27 +285,22 @@ export class Odontograma implements OnInit, OnDestroy {
         const colors: { [key: string]: string } = {
             'Caries': '#E53935',
             'Gingivitis': '#FB8C00',
-            'Periodontitis': '#6D4C41',
-            'Pulpitis': '#8E24AA',
-            'Fracture': '#424242',
-            'Abscess': '#1E88E5',
-            'Enamel Wear': '#FDD835'
+            'Periodontitis': '#8E24AA',
+            'Fractura': '#5D4037',
+            'Ausencia': '#212121'
         };
-        return colors[desc] || '#757575';
+        return colors[desc] || '#BDBDBD';
     }
 
     private getTreatmentColor(name: string): string {
         const colors: { [key: string]: string } = {
-            'Cleaning': '#26A69A',
-            'Filling': '#64B5F6',
-            'Root Canal': '#5E35B1',
-            'Extraction': '#212121',
-            'Whitening': '#E3F2FD',
-            'Implant': '#546E7A',
-            'Veneer': '#D7CCC8',
-            'Crown': '#FBC02D'
+            'Limpieza': '#26A69A',
+            'Obsturacion': '#1E88E5',
+            'Endodoncia': '#8E24AA',
+            'Extraccion': '#D32F2F',
+            'Blanqueamiento': '#FDD835'
         };
-        return colors[name] || '#26A69A';
+        return colors[name] || '#9E9E9E';
     }
 
     ngOnDestroy(): void {
