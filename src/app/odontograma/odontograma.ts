@@ -84,24 +84,19 @@ export class Odontograma implements OnInit, OnDestroy {
     ];
 
     pathologyList: { key: string; hex: string; label: string; backendId?: number }[] = [
-        { key: 'caries', hex: '#E53935', label: 'Càries' },
+        { key: 'caries', hex: '#E53935', label: 'Caries' },
         { key: 'gingivitis', hex: '#FB8C00', label: 'Gingivitis' },
-        { key: 'periodontitis', hex: '#6D4C41', label: 'Periodontitis' },
-        { key: 'pulpitis', hex: '#8E24AA', label: 'Pulpitis' },
-        { key: 'fracture', hex: '#424242', label: 'Fractura' },
-        { key: 'abscess', hex: '#1E88E5', label: 'Abscés' },
-        { key: 'enamelWear', hex: '#FDD835', label: 'Desgast esmalt' },
+        { key: 'periodontitis', hex: '#8E24AA', label: 'Periodontitis' },
+        { key: 'fractura', hex: '#5D4037', label: 'Fractura' },
+        { key: 'ausencia', hex: '#212121', label: 'Ausencia' }
     ];
 
     treatmentList: { key: string; hex: string; label: string; backendId?: number }[] = [
-        { key: 'cleaning', hex: '#26A69A', label: 'Neteja' },
-        { key: 'filling', hex: '#64B5F6', label: 'Emplenat' },
-        { key: 'rootCanal', hex: '#5E35B1', label: 'Conducte' },
-        { key: 'extraction', hex: '#212121', label: 'Extracció' },
-        { key: 'whitening', hex: '#E3F2FD', label: 'Blanqueig' },
-        { key: 'implant', hex: '#546E7A', label: 'Implant' },
-        { key: 'veneer', hex: '#D7CCC8', label: 'Carilla' },
-        { key: 'crown', hex: '#FBC02D', label: 'Corona' },
+        { key: 'limpieza', hex: '#26A69A', label: 'Limpieza' },
+        { key: 'obsturacion', hex: '#1E88E5', label: 'Obsturacion' },
+        { key: 'endodoncia', hex: '#8E24AA', label: 'Endodoncia' },
+        { key: 'extraccion', hex: '#D32F2F', label: 'Extraccion' },
+        { key: 'blanqueamiento', hex: '#FDD835', label: 'Blanqueamiento' }
     ];
 
     modalTab: 'pathology' | 'treatment' = 'pathology';
@@ -270,9 +265,9 @@ export class Odontograma implements OnInit, OnDestroy {
                 console.log('✅ Tratamientos desde DB:', data);
                 if (data && data.length > 0) {
                     this.treatmentList = data.map(t => ({
-                        key: t.treatmentName.toLowerCase().replace(/\s+/g, ''),
-                        label: t.treatmentName,
-                        hex: this.getTreatmentColor(t.treatmentName),
+                        key: t.name.toLowerCase().replace(/\s+/g, ''),
+                        label: t.name,
+                        hex: this.getTreatmentColor(t.name),
                         backendId: t.id
                     }));
                 }
