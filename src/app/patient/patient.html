@@ -1,15 +1,15 @@
 <div class="patients-container">
   <div class="header">
     <div class="title-section">
-      <h1>Pacientes</h1>
-      <p>Gestión de pacientes de la clínica</p>
+      <h1>Pacients</h1>
+      <p>Gestió de pacients de la clínica</p>
     </div>
     <div class="actions">
       <button class="btn-appointment" (click)="openNewAppointmentModal()">
-        <i class="fa-solid fa-calendar-plus"></i> Nueva Cita
+        <i class="fa-solid fa-calendar-plus"></i> Nova Cita
       </button>
       <button class="btn-new" routerLink="/patient/new">
-        <span class="icon"><i class="fa-solid fa-plus"></i></span> Nuevo Paciente
+        <span class="icon"><i class="fa-solid fa-plus"></i></span> Nou Pacient
       </button>
     </div>
   </div>
@@ -17,26 +17,26 @@
   <div class="search-section">
     <div class="search-bar">
       <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-      <input type="text" placeholder="Buscar por nombre, email o teléfono..." [(ngModel)]="searchText">
+      <input type="text" placeholder="Cercar per nom, email o telèfon..." [(ngModel)]="searchText">
     </div>
   </div>
 
   <div class="status-messages">
-    <div *ngIf="isLoading" class="status loading">Cargando pacientes desde backend...</div>
+    <div *ngIf="isLoading" class="status loading">Carregant pacients desde backend...</div>
     <div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
-    <div *ngIf="!isLoading && !errorMessage && filteredPatients.length === 0" class="status empty">No hay pacientes para mostrar.</div>
+    <div *ngIf="!isLoading && !errorMessage && filteredPatients.length === 0" class="status empty">No hi ha pacients per mostrar.</div>
   </div>
 
   <div class="table-container" *ngIf="!isLoading && !errorMessage && filteredPatients.length > 0">
     <table>
       <thead>
         <tr>
-          <th>Paciente</th>
-          <th>Contacto</th>
-          <th>Última Visita</th>
-          <th>Próxima Cita</th>
-          <th>Estado</th>
-          <th>Acciones</th>
+          <th>Pacient</th>
+          <th>Contacte</th>
+          <th>Darrera Visita</th>
+          <th>Pròxima Cita</th>
+          <th>Estat</th>
+          <th>Accions</th>
         </tr>
       </thead>
       <tbody>
@@ -44,7 +44,7 @@
           <td>
             <div class="patient-info">
               <span class="patient-name">{{ patient.firstName }} {{ patient.lastName }}</span>
-              <span class="patient-age">{{ patient.age || '-' }} años</span>
+              <span class="patient-age">{{ patient.age || '-' }} anys</span>
             </div>
           </td>
           <td>
@@ -66,7 +66,7 @@
           </td>
           <td>
             <a [routerLink]="['/patient', patient.id]" class="view-details">
-              <span class="view-icon"><i class="fa-solid fa-eye"></i></span> Ver detalles
+              <span class="view-icon"><i class="fa-solid fa-eye"></i></span> Veure detalls
             </a>
           </td>
         </tr>

@@ -3,7 +3,7 @@
   <div class="header">
     <div class="top-nav">
       <a routerLink="/patient" class="back-link">
-        <i class="fa-solid fa-arrow-left"></i> Volver a pacientes
+        <i class="fa-solid fa-arrow-left"></i> Tornar als pacients
       </a>
     </div>
     <div class="header-main">
@@ -63,8 +63,8 @@
       <!-- Próximas Citas -->
       <div class="card main-card">
         <div class="card-header">
-          <h3>Próximas Citas</h3>
-          <button class="action-btn-link" (click)="openNewAppointmentModal()">Nueva cita</button>
+          <h3>Properes Cites</h3>
+          <button class="action-btn-link" (click)="openNewAppointmentModal()">Nova cita</button>
         </div>
         <div class="appointments-list" *ngIf="patient.appointments">
           <div class="appointment-item" *ngFor="let cita of patient.appointments">
@@ -80,7 +80,7 @@
               {{ cita.status }}
             </div>
           </div>
-          <p class="no-data" *ngIf="patient.appointments.length === 0">No hay citas programadas.</p>
+          <p class="no-data" *ngIf="patient.appointments.length === 0">No hi ha cites programades.</p>
         </div>
       </div>
 
