@@ -11,11 +11,13 @@ export interface Cita {
 }
 
 export interface ToothState {
-  sections: { [key: string]: string }; // section index -> hex color
-  sectionNotes?: { [key: string]: string }; // section index -> note
-  pathologyTypes?: { [key: string]: string }; // section index -> pathology type
+  sections: { [key: string]: string };
+  sectionNotes?: { [key: string]: string };
+  pathologyTypes?: { [key: string]: string };
   absent: boolean;
   note?: string;
+  treatmentTypes?: { [key: string]: string };
+
 }
 
 export interface Tratamiento {
@@ -50,7 +52,7 @@ export interface PatientData {
   estado?: string;
   citas?: Cita[];
   tratamientos?: Tratamiento[];
-  appointments?: any[]; // For the actual backend response
+  appointments?: any[];
   odontogram?: OdontogramData;
   boxId?: number;
   box?: any;
@@ -63,32 +65,30 @@ export interface PatientData {
 })
 export class PatientService {
   updateToothAbsence(patientId: number, modalDiente: number, absent: boolean): Observable<void> {
-      const url = `${this.apiUrl}/${patientId}/teeth/${modalDiente}/absence`;
-      return this.http.put<void>(url, { absent }).pipe(
-          tap(() => console.log(`Estado de ausencia actualizado para el diente ${modalDiente} del paciente ${patientId}`)),
-          catchError(error => {
-              console.error(`Error al actualizar el estado de ausencia para el diente ${modalDiente} del paciente ${patientId}`, error);
-              return throwError(() => error);
-          })
-      );
+    const url = `${this.apiUrl}/${patientId}/teeth/${modalDiente}/absence`;
+    return this.http.put<void>(url, { absent }).pipe(
+      tap(() => console.log(`Estado de ausencia actualizado para el diente ${modalDiente} del paciente ${patientId}`)),
+      catchError(error => {
+        console.error(`Error al actualizar el estado de ausencia para el diente ${modalDiente} del paciente ${patientId}`, error);
+        return throwError(() => error);
+      })
+    );
   }
   private apiUrl = 'http://localhost:8000/api/patients';
   private http = inject(HttpClient);
 
 
-  // Subject para manejar las actualizaciones del odontograma con debounce
   private odontogramUpdateSubject = new Subject<{ patientId: number, data: OdontogramData }>();
 
   constructor() {
-    // Configurar el pipe para procesar las actualizaciones
     this.odontogramUpdateSubject.pipe(
-      debounceTime(500), // Esperar 500ms de calma antes de enviar
+      debounceTime(500),
       switchMap(({ patientId, data }) =>
         this.http.put<PatientData>(`${this.apiUrl}/${patientId}`, { odontogram: data }).pipe(
           tap(() => console.log(`Odontograma guardado correctamente para el paciente ${patientId}`)),
           catchError(error => {
             console.error(`Error al guardar el odontograma para el paciente ${patientId}`, error);
-            return []; // Continuar aunque haya error
+            return [];
           })
         )
       )
@@ -122,7 +122,6 @@ export class PatientService {
   }
 
   updateOdontogram(patientId: number, data: OdontogramData): void {
-    // En lugar de hacer el PUT directo, lo pasamos por el Subject
     this.odontogramUpdateSubject.next({ patientId, data });
   }
 

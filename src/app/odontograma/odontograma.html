@@ -1,177 +1,237 @@
-<div class="odontograma-container">
-    <div class="header-nav">
-        <button class="btn-back" (click)="goBack()">
-            <i class="fa-solid fa-arrow-left"></i> Volver al paciente
-        </button>
-        <div class="title-section">
-            <p *ngIf="patientName" class="patient-name">Paciente: {{patientName}}</p>
-        </div>
+        <div class="odontograma-container">
+            <div class="header-nav">
+                <button class="btn-back" (click)="goBack()">
+                    <i class="fa-solid fa-arrow-left"></i> Tornar al pacient
+                </button>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn" 
+                            [class.filter-btn-active]="filterType === 'child'"
+                            (click)="setFilter('child')">
+                        <i class="fa-solid fa-baby"></i> Infantil
+                    </button>
+                    <button class="filter-btn" 
+                            [class.filter-btn-active]="filterType === 'adult'"
+                            (click)="setFilter('adult')">
+                        <i class="fa-solid fa-user"></i> Adult
+                    </button>
+                    <button class="filter-btn" 
+                            [class.filter-btn-active]="filterType === 'combined'"
+                            (click)="setFilter('combined')">
+                        <i class="fa-solid fa-users"></i> Tots dos
+                    </button>
+                </div>
+                
+                <div class="title-section">
+                    <p *ngIf="patientName" class="patient-name">Pacient: {{patientName}}</p>
+                </div>
+            </div>
+
+
+            <div id="colores">
+                <div
+                    *ngFor="let color of coloresList"
+                    class="color-btn"
+                    [class.color-seleccionado]="colorActual === color.key"
+                    [style.background]="color.hex"
+                    [title]="color.label"
+                    (click)="selectColor(color.key)"
+                ></div>
+
+                <div
+                    class="color-btn"
+                    [class.color-seleccionado]="colorActual === 'erase'"
+                    title="Esborrar (clic directe)"
+                    style="background:white; border: 1px solid #ddd; display:flex; align-items:center; justify-content:center;"
+                    (click)="selectColor('erase')">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#2b6f84"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L20 13L15 8"/>
+                        <path d="M18 13L11 20"/>
+                    </svg>
     </div>
-
-    <div class="filter-controls">
-        <button [class.active]="filterType === 'adult'" (click)="setFilter('adult')">Adulto</button>
-        <button [class.active]="filterType === 'child'" (click)="setFilter('child')">Niño</button>
-        <button [class.active]="filterType === 'combined'" (click)="setFilter('combined')">Combinado</button>
-    </div>
-
-    <div id="colores">
-        <div class="color-btn" [class.color-seleccionado]="colorActual === 'red'" (click)="selectColor('red')"
-            style="background:#ff4d4d;" title="Pendiente"></div>
-        <div class="color-btn" [class.color-seleccionado]="colorActual === 'blue'" (click)="selectColor('blue')"
-            style="background:#4d79ff;" title="Realizado"></div>
-        <div class="color-btn" [class.color-seleccionado]="colorActual === 'black'" (click)="selectColor('black')"
-            style="background:#000;" title="Ausencia (X)"></div>
-        <div class="color-btn" [class.color-seleccionado]="colorActual === 'erase'" (click)="selectColor('erase')"
-            title="Borrar"
-            style="background:white; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#2b6f84" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L20 13L15 8"></path>
-                <path d="M18 13L11 20"></path>
-            </svg>
-        </div>
-    </div>
-
-    <div class="odontograma-wrapper" id="odontograma">
-        <div class="quadrant q-ul">
-            <div class="quadrant-row row-top" *ngIf="filterType === 'adult' || filterType === 'combined'">
-                <ng-container *ngFor="let num of quadrants.q1.adults">
-                    <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
-                </ng-container>
             </div>
-            <div class="quadrant-row row-top" *ngIf="filterType === 'child' || filterType === 'combined'">
-                <ng-container *ngFor="let num of quadrants.q1.temporals">
-                    <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
-                </ng-container>
-            </div>
-        </div>
 
-        <div class="quadrant q-ur">
-            <div class="quadrant-row row-top" *ngIf="filterType === 'adult' || filterType === 'combined'">
-                <ng-container *ngFor="let num of quadrants.q2.adults">
-                    <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
-                </ng-container>
-            </div>
-            <div class="quadrant-row row-top" *ngIf="filterType === 'child' || filterType === 'combined'">
-                <ng-container *ngFor="let num of quadrants.q2.temporals">
-                    <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
-                </ng-container>
-            </div>
-        </div>
+            <div class="odontograma-wrapper" id="odontograma">
+                <div class="quadrant q-ul">
+                    <div class="quadrant-row row-top" *ngIf="filterType === 'adult' || filterType === 'combined'">
+                        <ng-container *ngFor="let num of quadrants.q1.adults">
+                            <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
+                        </ng-container>
+                    </div>
+                    <div class="quadrant-row row-top" *ngIf="filterType === 'child' || filterType === 'combined'">
+                        <ng-container *ngFor="let num of quadrants.q1.temporals">
+                            <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
+                        </ng-container>
+                    </div>
+                </div>
 
-        <div class="quadrant q-ll">
-            <div class="quadrant-row row-bottom" *ngIf="filterType === 'child' || filterType === 'combined'">
-                <ng-container *ngFor="let num of quadrants.q4.temporals">
-                    <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
-                </ng-container>
-            </div>
-            <div class="quadrant-row row-bottom" *ngIf="filterType === 'adult' || filterType === 'combined'">
-                <ng-container *ngFor="let num of quadrants.q4.adults">
-                    <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
-                </ng-container>
-            </div>
-        </div>
+                <div class="quadrant q-ur">
+                    <div class="quadrant-row row-top" *ngIf="filterType === 'adult' || filterType === 'combined'">
+                        <ng-container *ngFor="let num of quadrants.q2.adults">
+                            <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
+                        </ng-container>
+                    </div>
+                    <div class="quadrant-row row-top" *ngIf="filterType === 'child' || filterType === 'combined'">
+                        <ng-container *ngFor="let num of quadrants.q2.temporals">
+                            <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
+                        </ng-container>
+                    </div>
+                </div>
 
-        <div class="quadrant q-lr">
-            <div class="quadrant-row row-bottom" *ngIf="filterType === 'child' || filterType === 'combined'">
-                <ng-container *ngFor="let num of quadrants.q3.temporals">
-                    <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
-                </ng-container>
-            </div>
-            <div class="quadrant-row row-bottom" *ngIf="filterType === 'adult' || filterType === 'combined'">
-                <ng-container *ngFor="let num of quadrants.q3.adults">
-                    <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
-                </ng-container>
-            </div>
-        </div>
-    </div>
+                <div class="quadrant q-ll">
+                    <div class="quadrant-row row-bottom" *ngIf="filterType === 'child' || filterType === 'combined'">
+                        <ng-container *ngFor="let num of quadrants.q4.temporals">
+                            <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
+                        </ng-container>
+                    </div>
+                    <div class="quadrant-row row-bottom" *ngIf="filterType === 'adult' || filterType === 'combined'">
+                        <ng-container *ngFor="let num of quadrants.q4.adults">
+                            <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
+                        </ng-container>
+                    </div>
+                </div>
 
-    <div class="notes-container">
-        <h3>Notas del Odontograma</h3>
-        <textarea [(ngModel)]="odontogramData.notes" (ngModelChange)="saveChanges()"
-            placeholder="Añadir observaciones sobre el estado dental del paciente..."></textarea>
-    </div>
-
-    <ng-template #dienteTemplate let-num>
-        <div class="diente-box">
-            <div class="numero">{{num}}</div>
-            <div class="diente" [attr.data-numero]="num">
-                <div class="x-ausencia" [style.display]="getToothState(num).absent ? 'block' : 'none'">X</div>
-                <svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <ng-container *ngIf="isAnterior(num); else molarTemplate">
-                        <polygon class="seccion" points="0,0 100,0 50,50" [style.fill]="getSectionFill(num, 's1')"
-                            (click)="onSectionClick(num, 's1')" />
-                        <polygon class="seccion" points="100,0 100,100 50,50" [style.fill]="getSectionFill(num, 's2')"
-                            (click)="onSectionClick(num, 's2')" />
-                        <polygon class="seccion" points="100,100 0,100 50,50" [style.fill]="getSectionFill(num, 's3')"
-                            (click)="onSectionClick(num, 's3')" />
-                        <polygon class="seccion" points="0,100 0,0 50,50" [style.fill]="getSectionFill(num, 's4')"
-                            (click)="onSectionClick(num, 's4')" />
-                    </ng-container>
-                    <ng-template #molarTemplate>
-                        <polygon class="seccion" points="0,0 100,0 75,25 25,25" [style.fill]="getSectionFill(num, 's1')"
-                            (click)="onSectionClick(num, 's1')" />
-                        <polygon class="seccion" points="100,0 100,100 75,75 75,25"
-                            [style.fill]="getSectionFill(num, 's2')" (click)="onSectionClick(num, 's2')" />
-                        <polygon class="seccion" points="0,100 100,100 75,75 25,75"
-                            [style.fill]="getSectionFill(num, 's3')" (click)="onSectionClick(num, 's3')" />
-                        <polygon class="seccion" points="0,0 0,100 25,75 25,25" [style.fill]="getSectionFill(num, 's4')"
-                            (click)="onSectionClick(num, 's4')" />
-                        <rect class="seccion" x="25" y="25" width="50" height="50"
-                            [style.fill]="getSectionFill(num, 's5')" (click)="onSectionClick(num, 's5')" />
-                    </ng-template>
-                </svg>
+                <div class="quadrant q-lr">
+                    <div class="quadrant-row row-bottom" *ngIf="filterType === 'child' || filterType === 'combined'">
+                        <ng-container *ngFor="let num of quadrants.q3.temporals">
+                            <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
+                        </ng-container>
+                    </div>
+                    <div class="quadrant-row row-bottom" *ngIf="filterType === 'adult' || filterType === 'combined'">
+                        <ng-container *ngFor="let num of quadrants.q3.adults">
+                            <ng-container *ngTemplateOutlet="dienteTemplate; context: { $implicit: num }"></ng-container>
+                        </ng-container>
+                    </div>
+                </div>
             </div>
-        </div>
-    </ng-template>
 
-    <!-- Modal de confirmación para odontograma -->
+            <div class="notes-container">
+                <h3>Notes de l'Odontograma</h3>
+                <textarea [(ngModel)]="odontogramData.notes" (ngModelChange)="saveChanges()"
+                    placeholder="Afegir observacions sobre l'estat dental del pacient..."></textarea>
+            </div>
+
+            <ng-template #dienteTemplate let-num>
+                <div class="diente-box">
+                    <div class="numero">{{num}}</div>
+                    <div class="diente" [attr.data-numero]="num">
+                        <div class="x-ausencia" [style.display]="getToothState(num).absent ? 'block' : 'none'">X</div>
+                        <svg viewBox="0 0 100 100" width="100%" height="100%">
+                            <ng-container *ngIf="isAnterior(num); else molarTemplate">
+                                <polygon class="seccion" points="0,0 100,0 50,50" [style.fill]="getSectionFill(num, 's1')"
+                                    (click)="onSectionClick(num, 's1')" />
+                                <polygon class="seccion" points="100,0 100,100 50,50" [style.fill]="getSectionFill(num, 's2')"
+                                    (click)="onSectionClick(num, 's2')" />
+                                <polygon class="seccion" points="100,100 0,100 50,50" [style.fill]="getSectionFill(num, 's3')"
+                                    (click)="onSectionClick(num, 's3')" />
+                                <polygon class="seccion" points="0,100 0,0 50,50" [style.fill]="getSectionFill(num, 's4')"
+                                    (click)="onSectionClick(num, 's4')" />
+                            </ng-container>
+                            <ng-template #molarTemplate>
+                                <polygon class="seccion" points="0,0 100,0 75,25 25,25" [style.fill]="getSectionFill(num, 's1')"
+                                    (click)="onSectionClick(num, 's1')" />
+                                <polygon class="seccion" points="100,0 100,100 75,75 75,25"
+                                    [style.fill]="getSectionFill(num, 's2')" (click)="onSectionClick(num, 's2')" />
+                                <polygon class="seccion" points="0,100 100,100 75,75 25,75"
+                                    [style.fill]="getSectionFill(num, 's3')" (click)="onSectionClick(num, 's3')" />
+                                <polygon class="seccion" points="0,0 0,100 25,75 25,25" [style.fill]="getSectionFill(num, 's4')"
+                                    (click)="onSectionClick(num, 's4')" />
+                                <rect class="seccion" x="25" y="25" width="50" height="50"
+                                    [style.fill]="getSectionFill(num, 's5')" (click)="onSectionClick(num, 's5')" />
+                            </ng-template>
+                            
+                        </svg>
+                    </div>
+                </div>
+            </ng-template>
+
     <div class="modal-backdrop" *ngIf="showModal" (click)="cerrarModal()">
         <div class="modal-container" (click)="$event.stopPropagation()">
+            
             <div class="modal-header">
-                <h2>Confirmar Acción</h2>
+                <div>
+                    <h2>{{ getToothName(modalDiente) }}</h2>
+                    <p class="modal-subtitle">Secció: {{ getSectionName(modalDiente, modalSeccion) }}</p>
+                </div>
                 <button class="btn-close" (click)="cerrarModal()">&times;</button>
             </div>
+
             <div class="modal-body">
-                <p style="font-weight: 700; color: #1e3a5f; margin-bottom: 0.5rem;">
-                    {{ getToothName(modalDiente) }}
-                </p>
-                <p style="color: #64748b; margin-bottom: 1rem;">
-                    Sección: {{ getSectionName(modalDiente, modalSeccion) }}
-                </p>
-
-                <div class="color-preview" [style.background]="modalColor === 'erase' ? 'white' : colors[modalColor]">
-                    <span *ngIf="modalColor === 'erase'">Borrado</span>
+                <div class="selection-preview">
+                    <div class="preview-dot" [style.background]="selectedPathologyHex"></div>
+                    <span class="preview-label">
+                        <strong>Patologia:</strong> {{ getItemLabel(modalPathology, 'pathology') }}
+                    </span>
                 </div>
 
-                <div class="pathology-section" *ngIf="modalColor === 'red' || modalColor === 'blue'" style="margin-top: 1.5rem; text-align: left;">
-                    <label
-                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">
-                        Tipo de patología:
-                    </label>
-                    <select [(ngModel)]="modalPathology" class="form-control" 
-                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 1rem;">
-                        <option value="" disabled selected>Seleccionar tipo de patología...</option>
-                        <option value="caries">Caries</option>
-                        <option value="sellado">Sellado</option>
-                    </select>
+                <div class="selection-preview" *ngIf="modalTreatment">
+                    <div class="preview-dot" [style.background]="selectedTreatmentHex"></div>
+                    <span class="preview-label">
+                        <strong>Tractament:</strong> {{ getItemLabel(modalTreatment, 'treatment') }}
+                    </span>
                 </div>
 
-
-
-                <div class="note-section" style="margin-top: 1.5rem; text-align: left;">
-                    <label
-                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">
-                        Observaciones para este diente:
-                    </label>
-                    <textarea [(ngModel)]="modalNote" class="form-control" rows="3"
-                        placeholder="Añadir detalles específicos de este diente..."
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; resize: vertical;"></textarea>
+                <div class="floating-buttons">
+                    <button class="floating-btn" (click)="openPathologyPopup()" [class.active]="pathologyPopupOpen">
+                        <i class="fa-solid fa-tooth"></i> Patologia
+                    </button>
+                    <button class="floating-btn" (click)="openTreatmentPopup()" [class.active]="treatmentPopupOpen">
+                        <i class="fa-solid fa-tools"></i> Tractament
+                    </button>
+                </div>
+                <div class="remove-treatment-section" *ngIf="modalTreatment">
+                    <button type="button" class="btn-remove-treatment" (click)="removeTreatment()">
+                        <i class="fa-solid fa-xmark"></i> Eliminar Tractament
+                    </button>
+                </div>
+                
+                <div class="note-section">
+                    <label class="note-label">Observacions (opcional)</label>
+                    <textarea [(ngModel)]="modalNote" class="note-textarea" rows="2" 
+                        placeholder="Notes clíniques..."></textarea>
                 </div>
             </div>
+
+            <div class="pathology-popup" *ngIf="pathologyPopupOpen" (click)="closePopup()">
+                <div class="popup-content" (click)="$event.stopPropagation()">
+                    <div class="popup-header">
+                        <h3>Patologies</h3>
+                        <button class="close-popup" (click)="closePopup()">&times;</button>
+                    </div>
+                    <div class="item-grid">
+                        <div *ngFor="let p of pathologyList" 
+                            class="item-card" 
+                            [class.item-card-selected]="modalPathology === p.key" 
+                            (click)="selectPathology(p.key); closePopup()">
+                            <div class="item-dot" [style.background]="p.hex"></div>
+                            <span class="item-label">{{ p.label }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="treatment-popup" *ngIf="treatmentPopupOpen" (click)="closePopup()">
+                <div class="popup-content" (click)="$event.stopPropagation()">
+                    <div class="popup-header">
+                        <h3>Tractaments</h3>
+                        <button class="close-popup" (click)="closePopup()">&times;</button>
+                    </div>
+                    <div class="item-grid">
+                        <div *ngFor="let t of treatmentList" 
+                            class="item-card" 
+                            [class.item-card-selected]="modalTreatment === t.key"
+                            (click)="selectTreatment(t.key); closePopup()">
+                            <div class="item-dot" [style.background]="t.hex"></div>
+                            <span class="item-label">{{ t.label }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn-delete" (click)="eliminarCambio()">Eliminar</button>
-                <button type="button" class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn-cancel" (click)="cerrarModal()">Cancel·lar</button>
                 <button type="button" class="btn-save" (click)="guardarCambio()">Guardar</button>
             </div>
         </div>
