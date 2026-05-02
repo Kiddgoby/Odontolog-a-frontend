@@ -33,7 +33,7 @@ export class LoginComponent {
     this.errorMessage = '';
 
     if (this.loginForm.invalid) {
-      this.errorMessage = 'Datos incompletos o correo no válido.';
+      this.errorMessage = 'Dades incompletes o correu no vàlid.';
       return;
     }
 
@@ -49,14 +49,14 @@ export class LoginComponent {
       next: (response) => {
         this.isLoading = false;
         this.loginForm.enable();
-        console.log('Login exitoso:', response.role);
+        console.log('Login correcte:', response.role);
         this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading = false;
         this.loginForm.enable();
-        console.error('Error en login:', error);
-        this.errorMessage = error.error?.message || 'Correo o contraseña incorrectos.';
+        console.error('Error en el login:', error);
+        this.errorMessage = error.error?.message || 'Correu o contrasenya incorrectes.';
       }
     });
   }
