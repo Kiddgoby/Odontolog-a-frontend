@@ -79,8 +79,7 @@ export class Odontograma implements OnInit, OnDestroy {
 
     coloresList: { key: string; hex: string; label: string }[] = [
         { key: 'red', hex: '#ff4d4d', label: 'Pendent' },
-        { key: 'blue', hex: '#4d79ff', label: 'Realitzat' },
-        { key: 'black', hex: '#000000', label: 'Absència (X)' },
+        { key: 'blue', hex: '#4d79ff', label: 'Realitzat' }
     ];
 
     pathologyList: { key: string; hex: string; label: string; backendId?: number }[] = [
