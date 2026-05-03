@@ -28,12 +28,21 @@ export class Appointment implements OnInit {
   }
 
   loadAppointments(): void {
+    console.log(' Iniciando carga de citas...');
     this.appointmentService.getAppointments().subscribe({
       next: appointments => {
+        console.log(' Citas recibidas en componente:', appointments);
+        console.log(' Número de citas:', appointments.length);
+        console.log(' Es array:', Array.isArray(appointments));
+        
         this.appointments = appointments;
+        console.log(' Appointments asignados:', this.appointments);
+        
+        // Verificar el getter filteredAppointments
+        console.log(' filteredAppointments:', this.filteredAppointments);
       },
       error: err => {
-        console.error('Error cargando citas', err);
+        console.error(' Error cargando citas', err);
       }
     });
   }

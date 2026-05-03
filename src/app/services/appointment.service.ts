@@ -53,20 +53,57 @@ export class AppointmentService {
   }
 
   private mapBackendAppointment(raw: any): AppointmentData {
+    // Extraer fecha y hora de visitDate si existe
+    let fecha = '';
+    let hora = '';
+    if (raw.visitDate) {
+      const visitDate = new Date(raw.visitDate);
+      fecha = visitDate.toISOString().split('T')[0];
+      hora = visitDate.toTimeString().substring(0, 5);
+    } else {
+      fecha = raw.fecha || '';
+      hora = raw.hora || '';
+    }
+
+    // Extraer nombres con múltiples fallbacks
+    const paciente = raw.patient_name || raw.paciente || 
+                     (raw.patient ? `${raw.patient?.firstName || ''} ${raw.patient?.lastName || ''}`.trim() : '') ||
+                     'Paciente';
+    
+    const tratamiento = raw.treatment_name || raw.tratamiento || raw.consultationReason ||
+                        (raw.treatment ? raw.treatment?.treatmentName || raw.treatment?.name : '') ||
+                        'Tratamiento';
+    
+    const doctor = raw.dentist_name || raw.doctor ||
+                   (raw.dentist ? `${raw.dentist?.firstName || ''} ${raw.dentist?.lastName || ''}`.trim() : '') ||
+                   'Doctor';
+    
+    const box = raw.box_name || raw.box || 
+                (raw.box ? raw.box?.name || raw.box?.number : '') || '';
+
+    // Normalizar estado
+    let estado: 'confirmada' | 'pendiente' | 'completada' = 'pendiente';
     const estadoRaw = (raw.estado || raw.status || 'pendiente').toString().toLowerCase();
+    if (estadoRaw === 'confirmado' || estadoRaw === 'confirmada') estado = 'confirmada';
+    if (estadoRaw === 'completado' || estadoRaw === 'completada') estado = 'completada';
+
+    // Normalizar asistencia
+    let asistido: 'sí' | 'no' | 'pendiente' = 'pendiente';
     const asistidoRaw = (raw.asistido || raw.attended || 'pendiente').toString().toLowerCase();
+    if (asistidoRaw === 'si' || asistidoRaw === 'sí') asistido = 'sí';
+    if (asistidoRaw === 'no') asistido = 'no';
 
     return {
-      id: Number(raw.id),
-      fecha: raw.fecha || raw.visitDate?.split('T')[0] || '',
-      hora: raw.hora || (raw.visitDate?.split('T')[1]?.substring(0, 5)) || '',
-      paciente: raw.patient_name || (raw.patient ? `${raw.patient.firstName} ${raw.patient.lastName}` : ''),
-      tratamiento: raw.treatment_name || (raw.treatment?.treatmentName) || raw.consultationReason || '',
-      doctor: raw.dentist_name || (raw.dentist ? `${raw.dentist.firstName} ${raw.dentist.lastName}` : ''),
-      box: raw.box_name || (raw.box?.name) || raw.box?.number || '',
+      id: Number(raw.id) || 0,
+      fecha: fecha || 'Sin fecha',
+      hora: hora || 'Sin hora',
+      paciente: paciente,
+      tratamiento: tratamiento,
+      doctor: doctor,
+      box: box,
       duracion: raw.duration || raw.duracion || '30 min',
-      estado: estadoRaw === 'confirmado' || estadoRaw === 'confirmada' ? 'confirmada' : estadoRaw === 'completado' || estadoRaw === 'completada' ? 'completada' : 'pendiente',
-      asistido: asistidoRaw === 'si' || asistidoRaw === 'sí' ? 'sí' : asistidoRaw === 'no' ? 'no' : 'pendiente',
+      estado: estado,
+      asistido: asistido,
       patient_id: raw.patient?.id || raw.patientId,
       dentist_id: raw.dentist?.id || raw.dentistId,
       treatment_id: raw.treatment?.id || raw.treatmentId,
