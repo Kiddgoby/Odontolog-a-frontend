@@ -176,11 +176,15 @@
                     <button class="floating-btn" (click)="openPathologyPopup()" [class.active]="pathologyPopupOpen">
                         <i class="fa-solid fa-tooth"></i> Patologia
                     </button>
-                    <button class="floating-btn" (click)="openTreatmentPopup()" [class.active]="treatmentPopupOpen">
+                    <button class="floating-btn" 
+                            (click)="openTreatmentPopup()" 
+                            [class.active]="treatmentPopupOpen"
+                            [disabled]="modalPathology === 'ausencia'"
+                            [class.disabled]="modalPathology === 'ausencia'">
                         <i class="fa-solid fa-tools"></i> Tractament
                     </button>
                 </div>
-                <div class="remove-treatment-section" *ngIf="modalTreatment">
+                <div class="remove-treatment-section" *ngIf="modalTreatment && modalPathology !== 'ausencia'">
                     <button type="button" class="btn-remove-treatment" (click)="removeTreatment()">
                         <i class="fa-solid fa-xmark"></i> Eliminar Tractament
                     </button>
