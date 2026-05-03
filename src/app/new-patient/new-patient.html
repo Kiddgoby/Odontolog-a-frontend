@@ -2,14 +2,14 @@
   <div class="header">
     <div class="top-nav">
       <a routerLink="/patient" class="back-link">
-        <i class="fa-solid fa-arrow-left"></i> Volver a pacientes
+        <i class="fa-solid fa-arrow-left"></i> Tornar als pacients
       </a>
     </div>
-    <h1>Nuevo Registro de Paciente</h1>
-    <p>Complete la información detallada para el alta en el sistema.</p>
+    <h1>Nou Registre de Pacient</h1>
+    <p>Completeu la informació detallada per a l'alta al sistema.</p>
     
     <div class="status-messages" *ngIf="errorMessage || successMessage || isSaving">
-      <div *ngIf="isSaving" class="status loading">Guardando paciente...</div>
+      <div *ngIf="isSaving" class="status loading">Guardant pacient...</div>
       <div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
       <div *ngIf="successMessage" class="status success">{{ successMessage }}</div>
     </div>
@@ -21,32 +21,32 @@
     <div class="form-section card">
       <div class="section-title">
         <i class="fa-solid fa-user"></i>
-        <h3>Información Personal</h3>
+        <h3>Informació Personal</h3>
       </div>
 
       <div class="form-grid">
         <div class="form-group">
-          <label for="firstName">Nombre</label>
-          <input type="text" id="firstName" formControlName="firstName" placeholder="Ej: María">
+          <label for="firstName">Nom</label>
+          <input type="text" id="firstName" formControlName="firstName" placeholder="Ex: Maria">
           <div class="error-msg"
             *ngIf="patientForm.get('firstName')?.touched && patientForm.get('firstName')?.invalid">
-            El nombre es obligatorio (mín. 2 caracteres).
+            El nom és obligatori (mín. 2 caràcters).
           </div>
         </div>
 
         <div class="form-group">
-          <label for="lastName">Apellidos</label>
-          <input type="text" id="lastName" formControlName="lastName" placeholder="Ej: García López">
+          <label for="lastName">Cognoms</label>
+          <input type="text" id="lastName" formControlName="lastName" placeholder="Ex: García López">
           <div class="error-msg" *ngIf="patientForm.get('lastName')?.touched && patientForm.get('lastName')?.invalid">
-            Los apellidos son obligatorios.
+            Els cognoms són obligatoris.
           </div>
         </div>
 
         <div class="form-group">
-          <label for="age">Edad</label>
-          <input type="number" id="age" formControlName="age" placeholder="Ej: 25">
+          <label for="age">Edat</label>
+          <input type="number" id="age" formControlName="age" placeholder="Ex: 25">
           <div class="error-msg" *ngIf="patientForm.get('age')?.touched && patientForm.get('age')?.invalid">
-            La edad es obligatoria (0-120).
+            L'edat és obligatòria (0-120).
           </div>
         </div>
 
@@ -55,37 +55,37 @@
           <input type="text" id="nationalId" formControlName="nationalId" placeholder="12345678X">
           <div class="error-msg"
             *ngIf="patientForm.get('nationalId')?.touched && patientForm.get('nationalId')?.invalid">
-            El DNI es obligatorio.
+            El DNI és obligatori.
           </div>
         </div>
 
         <div class="form-group">
-          <label for="socialSecurityNumber">Nº Seguridad Social</label>
+          <label for="socialSecurityNumber">Núm. Seguretat Social</label>
           <input type="text" id="socialSecurityNumber" formControlName="socialSecurityNumber"
             placeholder="Opcional">
         </div>
 
         <div class="form-group">
-          <label for="phone">Teléfono</label>
+          <label for="phone">Telèfon</label>
           <input type="tel" id="phone" formControlName="phone" placeholder="+34 600 000 000">
           <div class="error-msg" *ngIf="patientForm.get('phone')?.touched && patientForm.get('phone')?.invalid">
-            El teléfono es obligatorio.
+            El telèfon és obligatori.
           </div>
         </div>
 
         <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" formControlName="email" placeholder="ejemplo@correo.com">
+          <label for="email">Correu electrònic</label>
+          <input type="email" id="email" formControlName="email" placeholder="exemple@correu.com">
           <div class="error-msg" *ngIf="patientForm.get('email')?.touched && patientForm.get('email')?.invalid">
-            Introduce un email válido.
+            Introdueix un correu electrònic vàlid.
           </div>
         </div>
 
         <div class="form-group full-width">
-          <label for="address">Dirección Completa</label>
-          <input type="text" id="address" formControlName="address" placeholder="Calle, Número, Piso, Ciudad">
+          <label for="address">Adreça Completa</label>
+          <input type="text" id="address" formControlName="address" placeholder="Carrer, Número, Pis, Ciutat">
           <div class="error-msg" *ngIf="patientForm.get('address')?.touched && patientForm.get('address')?.invalid">
-            La dirección es obligatoria.
+            L'adreça és obligatòria.
           </div>
         </div>
       </div>
@@ -95,30 +95,30 @@
     <div class="form-section card">
       <div class="section-title">
         <i class="fa-solid fa-stethoscope"></i>
-        <h3>Información Médica y Hábitos</h3>
+        <h3>Informació Mèdica i Hàbits</h3>
       </div>
 
       <div class="form-grid">
         <div class="form-group">
-          <label for="medicationAllergies">Alergias y Medicación</label>
+          <label for="medicationAllergies">Al·lèrgies i Medicació</label>
           <textarea id="medicationAllergies" formControlName="medicationAllergies"
-            placeholder="Detalle alergias a medicamentos..."></textarea>
+            placeholder="Detall al·lèrgies a medicaments..."></textarea>
         </div>
 
         <div class="form-group">
-          <label for="healthStatus">Estado de Salud General</label>
+          <label for="healthStatus">Estat de Salut General</label>
           <textarea id="healthStatus" formControlName="healthStatus"
-            placeholder="Patologías previas, cirugías..."></textarea>
+            placeholder="Patologies prèvies, cirurgies..."></textarea>
         </div>
 
         <div class="form-group">
           <label for="familyHistory">Historial Familiar</label>
           <textarea id="familyHistory" formControlName="familyHistory"
-            placeholder="Antecedentes médicos relevantes..."></textarea>
+            placeholder="Antecedents mèdics rellevants..."></textarea>
         </div>
 
         <div class="form-group">
-          <label for="lifestyleHabits">Hábitos de Vida</label>
+          <label for="lifestyleHabits">Hàbits de Vida</label>
           <textarea id="lifestyleHabits" formControlName="lifestyleHabits"
             placeholder="Fumador, higiene dental, dieta..."></textarea>
         </div>
@@ -129,25 +129,25 @@
     <div class="form-section card">
       <div class="section-title">
         <i class="fa-solid fa-file-invoice-dollar"></i>
-        <h3>Datos de Facturación / Seguro</h3>
+        <h3>Dades de Facturació / Assegurança</h3>
       </div>
 
       <div class="form-grid">
         <div class="form-group full-width">
-          <label for="billingData">Información de Facturación</label>
+          <label for="billingData">Informació de Facturació</label>
           <input type="text" id="billingData" formControlName="billingData"
-            placeholder="Compañía de seguro o datos fiscales">
+            placeholder="Companyia d'assegurança o dades fiscals">
         </div>
       </div>
     </div>
 
     <!-- Form Actions -->
     <div class="form-actions">
-      <button type="button" routerLink="/patients" class="btn-cancel">Cancelar</button>
+      <button type="button" routerLink="/patients" class="btn-cancel">Cancel·lar</button>
       <button type="submit" class="btn-submit" [disabled]="isSaving || !patientForm.valid">
         <i class="fa-solid fa-save" *ngIf="!isSaving"></i>
         <i class="fa-solid fa-circle-notch fa-spin" *ngIf="isSaving"></i>
-        {{ isSaving ? 'Guardando...' : 'Guardar Paciente' }}
+        {{ isSaving ? 'Guardant...' : 'Guardar Pacient' }}
       </button>
     </div>
   </form>

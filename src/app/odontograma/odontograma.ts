@@ -3,6 +3,41 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PatientService, OdontogramData, ToothState } from '../services/patient.service';
+import { OdontogramaService } from '../services/odontograma.service';
+
+interface OdontogramDetailData {
+    id?: number;
+    odontogramId: number;
+    toothId: number;
+    pathologyId?: number;
+    treatmentId?: number;
+    statusId?: number;
+    notes?: string;
+    face?: string;
+}
+
+interface PathologyItem {
+    id: number;
+    description: string;
+    key: string;
+    hex: string;
+    label?: string;
+}
+
+interface TreatmentItem {
+    id: number;
+    name: string;
+    key: string;
+    hex: string;
+    label?: string;
+}
+
+interface StatusItem {
+    id: number;
+    name: string;
+    key: string;
+    hex: string;
+}
 
 @Component({
     selector: 'app-odontograma',
@@ -23,21 +58,105 @@ export class Odontograma implements OnInit, OnDestroy {
     patientName: string = '';
     filterType: 'adult' | 'child' | 'combined' = 'combined';
 
-    // Estado del modal de confirmación
+    lastClickedTooth: number | null = null;
+    lastClickedSection: string | null = null;
+
     showModal: boolean = false;
     modalDiente: number = 0;
     modalSeccion: string = '';
     modalColor: string = '';
     modalNote: string = '';
     modalPathology: string = 'caries';
+    modalTreatment: string = '';
 
 
     colors: { [key: string]: string } = {
-
         red: "#ff4d4d",
         blue: "#4d79ff",
-        black: "#000"
+        black: "#000",
+        erase: "#ffffff"
     };
+
+    coloresList: { key: string; hex: string; label: string }[] = [
+        { key: 'red', hex: '#ff4d4d', label: 'Pendent' },
+        { key: 'blue', hex: '#4d79ff', label: 'Realitzat' }
+    ];
+
+    pathologyList: { key: string; hex: string; label: string; backendId?: number }[] = [
+        { key: 'caries', hex: '#E53935', label: 'Caries' },
+        { key: 'gingivitis', hex: '#FB8C00', label: 'Gingivitis' },
+        { key: 'periodontitis', hex: '#8E24AA', label: 'Periodontitis' },
+        { key: 'fractura', hex: '#5D4037', label: 'Fractura' },
+        { key: 'ausencia', hex: '#212121', label: 'Ausencia' }
+    ];
+
+    treatmentList: { key: string; hex: string; label: string; backendId?: number }[] = [
+        { key: 'limpieza', hex: '#26A69A', label: 'Limpieza' },
+        { key: 'obsturacion', hex: '#1E88E5', label: 'Obsturacion' },
+        { key: 'endodoncia', hex: '#8E24AA', label: 'Endodoncia' },
+        { key: 'extraccion', hex: '#D32F2F', label: 'Extraccion' },
+        { key: 'blanqueamiento', hex: '#FDD835', label: 'Blanqueamiento' }
+    ];
+
+    modalTab: 'pathology' | 'treatment' = 'pathology';
+
+    pathologyPopupOpen: boolean = false;
+    treatmentPopupOpen: boolean = false;
+
+    getItemLabel(key: string | null, type: 'pathology' | 'treatment' = 'pathology'): string {
+        if (!key) return '';
+
+        console.log(`🔍 getItemLabel Debug:`);
+        console.log(`  - type: ${type}`);
+        console.log(`  - key: ${key}`);
+        console.log(`  - pathologyList:`, this.pathologyList);
+        console.log(`  - treatmentList:`, this.treatmentList);
+
+        const list = type === 'pathology' ? this.pathologyList : this.treatmentList;
+        const item = list.find(item => item.key === key);
+
+        console.log(`  - item encontrado:`, item);
+        console.log(`  - label final: ${item?.label || key || ''}`);
+
+        return item?.label || key || '';
+    }
+
+    get selectedItemHex(): string {
+        const allItems = [...this.pathologyList, ...this.treatmentList];
+        const found = allItems.find(i => i.key === this.modalPathology);
+        return found ? found.hex : '#e2e8f0';
+    }
+
+    openPathologyPopup(): void {
+        this.pathologyPopupOpen = true;
+        this.treatmentPopupOpen = false;
+    }
+
+    openTreatmentPopup(): void {
+        this.treatmentPopupOpen = true;
+        this.pathologyPopupOpen = false;
+    }
+
+    closePopup(): void {
+        this.pathologyPopupOpen = false;
+        this.treatmentPopupOpen = false;
+    }
+
+    selectPathology(key: string): void {
+        console.log('🦷 Patología seleccionada:', key);
+        this.modalPathology = key;
+        this.closePopup();
+    }
+
+    selectTreatment(key: string): void {
+        console.log('🔧 Tratamiento seleccionado:', key);
+        this.modalTreatment = key;
+        this.closePopup();
+    }
+
+    removeTreatment(): void {
+        this.modalTreatment = '';
+    }
 
     pathologyColors: { [key: string]: string } = {
         caries: "#4dff88",
@@ -56,11 +175,19 @@ export class Odontograma implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private patientService: PatientService
+        private patientService: PatientService,
+        private odontogramaService: OdontogramaService
+
     ) { }
+
+    backendPathologies: any[] = [];
+    backendTreatments: any[] = [];
+    backendStatuses: any[] = [];
+    odontogramId: number | null = null;
 
     ngOnInit(): void {
         this.loadInitialData();
+        this.loadBackendData();
     }
 
     loadInitialData(): void {
@@ -72,16 +199,38 @@ export class Odontograma implements OnInit, OnDestroy {
         }
 
         if (this.patientId) {
-            this.patientService.getPatientById(this.patientId).subscribe(patient => {
-                if (patient) {
-                    this.patientName = `${patient.firstName} ${patient.lastName}`;
-                    if (patient.odontogram) {
-                        this.odontogramData = JSON.parse(JSON.stringify(patient.odontogram));
-                    }
-                    // Asegurar que 'teeth' sea un objeto y no un array (problema de serialización PHP/JSON)
-                    if (!this.odontogramData.teeth || Array.isArray(this.odontogramData.teeth)) {
-                        this.odontogramData.teeth = {};
-                    }
+            this.odontogramaService.getOrCreateOdontogram(this.patientId).subscribe({
+                next: (odontogramResponse) => {
+                    console.log('✅ Odontograma obtenido/creado:', odontogramResponse);
+                    this.odontogramId = odontogramResponse.id ?? this.patientId;
+
+                    this.patientService.getPatientById(this.patientId!).subscribe(patient => {
+                        if (patient) {
+                            this.patientName = `${patient.firstName} ${patient.lastName}`;
+                            if (patient.odontogram) {
+                                this.odontogramData = JSON.parse(JSON.stringify(patient.odontogram));
+                            }
+                            if (!this.odontogramData.teeth || Array.isArray(this.odontogramData.teeth)) {
+                                this.odontogramData.teeth = {};
+                            }
+                        }
+                    });
+                },
+                error: (error) => {
+                    console.error('❌ Error obteniendo/creando odontograma:', error);
+                    this.odontogramId = this.patientId ?? null;
+
+                    this.patientService.getPatientById(this.patientId!).subscribe(patient => {
+                        if (patient) {
+                            this.patientName = `${patient.firstName} ${patient.lastName}`;
+                            if (patient.odontogram) {
+                                this.odontogramData = JSON.parse(JSON.stringify(patient.odontogram));
+                            }
+                            if (!this.odontogramData.teeth || Array.isArray(this.odontogramData.teeth)) {
+                                this.odontogramData.teeth = {};
+                            }
+                        }
+                    });
                 }
             });
         } else if (this.initialData) {
@@ -93,6 +242,66 @@ export class Odontograma implements OnInit, OnDestroy {
         }
     }
 
+    loadBackendData(): void {
+        console.log('🔄 Cargando datos del backend...');
+
+        this.odontogramaService.getPathologies().subscribe({
+            next: (data: any[]) => {
+                console.log('✅ Patologías desde DB:', data);
+                if (data && data.length > 0) {
+                    this.pathologyList = data.map(p => ({
+                        key: p.description.toLowerCase().replace(/\s+/g, ''),
+                        label: p.description,
+                        hex: this.getPathologyColor(p.description),
+                        backendId: p.id
+                    }));
+                }
+            }
+        });
+
+        this.odontogramaService.getTreatments().subscribe({
+            next: (data: any[]) => {
+                console.log('✅ Tratamientos desde DB:', data);
+                if (data && data.length > 0) {
+                    this.treatmentList = data.map(t => ({
+                        key: t.name.toLowerCase().replace(/\s+/g, ''),
+                        label: t.name,
+                        hex: this.getTreatmentColor(t.name),
+                        backendId: t.id
+                    }));
+                }
+            }
+        });
+
+        this.odontogramaService.getStatuses().subscribe({
+            next: (data) => {
+                this.backendStatuses = data;
+            }
+        });
+    }
+
+    private getPathologyColor(desc: string): string {
+        const colors: { [key: string]: string } = {
+            'Caries': '#E53935',
+            'Gingivitis': '#FB8C00',
+            'Periodontitis': '#8E24AA',
+            'Fractura': '#5D4037',
+            'Ausencia': '#212121'
+        };
+        return colors[desc] || '#BDBDBD';
+    }
+
+    private getTreatmentColor(name: string): string {
+        const colors: { [key: string]: string } = {
+            'Limpieza': '#26A69A',
+            'Obsturacion': '#1E88E5',
+            'Endodoncia': '#8E24AA',
+            'Extraccion': '#D32F2F',
+            'Blanqueamiento': '#FDD835'
+        };
+        return colors[name] || '#9E9E9E';
+    }
+
     ngOnDestroy(): void {
         this.saveFinal();
     }
@@ -102,6 +311,16 @@ export class Odontograma implements OnInit, OnDestroy {
         if (this.colors[color]) {
             this.selectedHex = this.colors[color];
         }
+    }
+
+    get selectedPathologyHex(): string {
+        const found = this.pathologyList.find(i => i.key === this.modalPathology);
+        return found ? found.hex : '#e2e8f0';
+    }
+
+    get selectedTreatmentHex(): string {
+        const found = this.treatmentList.find(i => i.key === this.modalTreatment);
+        return found ? found.hex : '#e2e8f0';
     }
 
     setFilter(type: 'adult' | 'child' | 'combined'): void {
@@ -116,21 +335,23 @@ export class Odontograma implements OnInit, OnDestroy {
         if (!this.odontogramData.teeth[numero]) {
             this.odontogramData.teeth[numero] = { sections: {}, absent: false };
         }
-        // Asegurar que 'sections' sea un objeto y no un array (problema de serialización PHP/JSON)
-        if (Array.isArray(this.odontogramData.teeth[numero].sections)) {
-            this.odontogramData.teeth[numero].sections = {};
+        if (Array.isArray(this.odontogramData.teeth[numero]?.sections)) {
+            this.odontogramData.teeth[numero]!.sections = {};
         }
-        return this.odontogramData.teeth[numero];
+        return this.odontogramData.teeth[numero]!;
     }
 
     onSectionClick(numero: number, sectionIndex: string): void {
-        // Si el color actual es 'erase', borrar directamente sin mostrar el modal
+        this.lastClickedTooth = numero;
+        this.lastClickedSection = sectionIndex;
+
         if (this.colorActual === 'erase') {
-            const tooth = this.getToothState(numero);
-            delete tooth.sections[sectionIndex];
-            if (tooth.sectionNotes) delete tooth.sectionNotes[sectionIndex];
-            tooth.absent = false;
-            this.saveChanges();
+            this.eraseSectionDirectly();
+            return;
+        }
+
+        if (this.colorActual === 'black') {
+            this.markAbsenceDirectly(numero);
             return;
         }
 
@@ -139,76 +360,192 @@ export class Odontograma implements OnInit, OnDestroy {
         this.modalSeccion = sectionIndex;
         this.modalColor = this.colorActual;
 
-        // Cargar nota específica de la sección si existe
         this.modalNote = (tooth.sectionNotes && tooth.sectionNotes[sectionIndex]) || '';
-
-        // Para colores rojo y azul, cargar el tipo de patología
         this.modalPathology = (tooth.pathologyTypes && tooth.pathologyTypes[sectionIndex]) || 'caries';
+        this.modalTreatment = (tooth.treatmentTypes && tooth.treatmentTypes[sectionIndex]) || '';
 
         this.showModal = true;
     }
 
-    guardarCambio(): void {
-        const tooth = this.getToothState(this.modalDiente);
-
-        // Inicializar sectionNotes si no existe
-        if (!tooth.sectionNotes) {
-            tooth.sectionNotes = {};
+    eraseSectionDirectly(): void {
+        if (!this.lastClickedTooth || !this.lastClickedSection) {
+            return;
         }
 
-        // Si hay una nota, la añadimos también a las notas generales del odontograma
-        if (this.modalNote && this.modalNote.trim() !== '') {
-            const toothName = this.getToothName(this.modalDiente);
-            const sectionName = this.getSectionName(this.modalDiente, this.modalSeccion);
-            const pathologyName = this.getPathologyName(this.modalColor, this.modalPathology);
+        const tooth = this.getToothState(this.lastClickedTooth);
+        delete tooth.sections[this.lastClickedSection!];
+        if (tooth.sectionNotes) delete tooth.sectionNotes[this.lastClickedSection!];
+        if (tooth.pathologyTypes) delete tooth.pathologyTypes[this.lastClickedSection!];
+        tooth.absent = false;
 
-            // Solo añadir si la nota ha cambiado o es nueva para esta sección
-            if (tooth.sectionNotes[this.modalSeccion] !== this.modalNote) {
-                const newNoteEntry = `${toothName} (${sectionName}) - ${pathologyName}: ${this.modalNote}`;
+        this.saveChanges();
+        console.log(`✅ Sección ${this.lastClickedSection} del diente ${this.lastClickedTooth} borrada`);
+    }
 
-                if (!this.odontogramData.notes) {
-                    this.odontogramData.notes = newNoteEntry;
-                } else {
-                    this.odontogramData.notes += `\n${newNoteEntry}`;
-                }
-            }
-        }
 
-        // Guardar nota específica para la sección
-        tooth.sectionNotes[this.modalSeccion] = this.modalNote;
+    markAbsenceDirectly(toothNumber: number): void {
+        const tooth = this.getToothState(toothNumber);
+        tooth.absent = true;
 
-        if (this.modalColor === 'black') {
-            tooth.absent = !tooth.absent;
+        tooth.sections = {};
+        if (tooth.sectionNotes) tooth.sectionNotes = {};
+        if (tooth.pathologyTypes) tooth.pathologyTypes = {};
 
-            // Enviar a la base de datos si el estado de ausencia cambia
-            if (this.patientId) {
-                this.patientService.updateToothAbsence(this.patientId, this.modalDiente, tooth.absent).subscribe();
-            }
-        } else if (this.modalColor === 'erase') {
-            delete tooth.sections[this.modalSeccion];
-            if (tooth.sectionNotes) delete tooth.sectionNotes[this.modalSeccion];
-            if (tooth.pathologyTypes) delete tooth.pathologyTypes[this.modalSeccion];
-            tooth.absent = false;
-        } else {
-            let finalColor = this.colors[this.modalColor];
-            
-            // Para rojo y azul, aplicar el color de la patología si existe
-            if (this.modalColor === 'red' || this.modalColor === 'blue') {
-                if (!tooth.pathologyTypes) tooth.pathologyTypes = {};
-                tooth.pathologyTypes[this.modalSeccion] = this.modalPathology;
-                
-                // Si hay color específico para la patología lo usamos
-                if (this.pathologyColors[this.modalPathology]) {
-                    finalColor = this.pathologyColors[this.modalPathology];
-                }
-            }
-            
-            tooth.sections[this.modalSeccion] = finalColor;
-            tooth.absent = false;
+        if (this.patientId) {
+            this.patientService.updateToothAbsence(this.patientId, toothNumber, true).subscribe();
         }
 
         this.saveChanges();
-        this.cerrarModal();
+        console.log(`✅ Diente ${toothNumber} marcado como AUSENTE`);
+    }
+
+
+    guardarCambio(): void {
+        const tooth = this.getToothState(this.modalDiente);
+
+        if (!this.odontogramId) {
+            console.error('❌ Error: odontogramId es null. No se puede guardar sin un ID de odontograma.');
+            alert('Error: No hay un odontograma asociado. Por favor, recarga la página.');
+            return;
+        }
+
+        const pathologyItem = this.pathologyList.find(p => p.key === this.modalPathology);
+        const treatmentItem = this.treatmentList.find(t => t.key === this.modalTreatment);
+
+        if (!pathologyItem) {
+            console.error('❌ Error: No se encontró la patología seleccionada:', this.modalPathology);
+            alert('Error: Patología no válida. Por favor, selecciona una patología válida.');
+            return;
+        }
+
+        const statusItem = this.backendStatuses.find(s =>
+            (this.modalColor === 'red' && s.name === 'Pending') ||
+            (this.modalColor === 'blue' && s.name === 'Done')
+        );
+
+        const detailData = {
+            odontogramId: this.odontogramId,
+            toothId: this.getToothDatabaseId(this.modalDiente),
+            pathologyId: pathologyItem?.backendId,
+            treatmentId: treatmentItem?.backendId,
+            statusId: statusItem?.id,
+            face: this.modalSeccion,
+            notes: this.modalNote || ''
+        };
+
+        console.log('=== DATOS PARA GUARDAR ===');
+        console.log('detailData:', detailData);
+        console.log('pathologyItem:', pathologyItem);
+        console.log('treatmentItem:', treatmentItem);
+        console.log('odontogramId:', this.odontogramId);
+        console.log('modalDiente:', this.modalDiente);
+        console.log('modalSeccion:', this.modalSeccion);
+        console.log('modalPathology:', this.modalPathology);
+        console.log('modalTreatment:', this.modalTreatment);
+        console.log('=============================');
+
+        const payload = JSON.stringify(detailData, null, 2);
+        console.log('🚀 Iniciando guardado de detalle:', {
+            url: `${this.odontogramaService['apiUrl']}/odontogram-details`,
+            data: detailData
+        });
+
+        this.odontogramaService.saveDetail(detailData).subscribe({
+            next: (response) => {
+                console.log('✅ RESPUESTA SERVIDOR:', response);
+                console.log('✨ Detalle guardado con éxito en DB');
+
+                if (!tooth.sectionNotes) tooth.sectionNotes = {};
+                if (!tooth.pathologyTypes) tooth.pathologyTypes = {};
+                if (!tooth.treatmentTypes) tooth.treatmentTypes = {};
+
+                tooth.pathologyTypes[this.modalSeccion] = this.modalPathology;
+                if (this.modalTreatment) {
+                    tooth.treatmentTypes[this.modalSeccion] = this.modalTreatment;
+                }
+
+                let finalColor = this.colors[this.modalColor as keyof typeof this.colors] || '#ffffff';
+                if (treatmentItem) finalColor = treatmentItem.hex;
+                tooth.sections[this.modalSeccion] = finalColor;
+                tooth.sectionNotes[this.modalSeccion] = this.modalNote;
+
+                let noteEntry = `${this.getToothName(this.modalDiente)} (${this.getSectionName(this.modalDiente, this.modalSeccion)}): `;
+                noteEntry += `${this.getItemLabel(this.modalPathology, 'pathology')}`;
+                if (this.modalTreatment) {
+                    noteEntry += ` → ${this.getItemLabel(this.modalTreatment, 'treatment')}`;
+                }
+                if (this.modalNote) {
+                    noteEntry += `: ${this.modalNote}`;
+                }
+
+                if (!this.odontogramData.notes) {
+                    this.odontogramData.notes = noteEntry;
+                } else {
+                    this.odontogramData.notes += `\n${noteEntry}`;
+                }
+
+                this.saveChanges();
+                this.cerrarModal();
+            },
+            error: (error) => {
+                console.error('❌ ERROR AL GUARDAR:', error);
+
+                let errorMessage = 'Error al guardar en el servidor';
+                let diagnosticInfo = '';
+
+                if (error.status === 0) {
+                    errorMessage = 'No se puede conectar con el servidor';
+                    diagnosticInfo = 'Asegúrate de que Symfony esté corriendo (symfony server:start)';
+                } else if (error.status === 500) {
+                    errorMessage = 'Error interno del servidor (500)';
+                    diagnosticInfo = error.error?.error || 'Revisa los logs de Symfony para más detalles.';
+                } else {
+                    errorMessage = error.error?.message || errorMessage;
+                }
+
+                alert(`${errorMessage}\n\n${diagnosticInfo}`);
+
+                console.log('🔄 Fallback: Guardando localmente...');
+                this.guardarLocalmente(tooth, pathologyItem, treatmentItem);
+                this.cerrarModal();
+            }
+        });
+    }
+
+    private guardarLocalmente(tooth: ToothState, pathologyItem: any, treatmentItem: any): void {
+        console.log('💾 Guardando localmente...');
+
+        if (!tooth.sectionNotes) tooth.sectionNotes = {};
+        if (!tooth.pathologyTypes) tooth.pathologyTypes = {};
+        if (!tooth.treatmentTypes) tooth.treatmentTypes = {};
+
+        tooth.pathologyTypes[this.modalSeccion] = this.modalPathology;
+        if (this.modalTreatment) {
+            tooth.treatmentTypes[this.modalSeccion] = this.modalTreatment;
+        }
+
+        let finalColor = this.colors[this.modalColor as keyof typeof this.colors] || '#ffffff';
+        if (treatmentItem) finalColor = treatmentItem.hex;
+        tooth.sections[this.modalSeccion] = finalColor;
+        tooth.sectionNotes[this.modalSeccion] = this.modalNote;
+
+        let noteEntry = `${this.getToothName(this.modalDiente)} (${this.getSectionName(this.modalDiente, this.modalSeccion)}): `;
+        noteEntry += `${this.getItemLabel(this.modalPathology, 'pathology')}`;
+        if (this.modalTreatment) {
+            noteEntry += ` → ${this.getItemLabel(this.modalTreatment, 'treatment')}`;
+        }
+        if (this.modalNote) {
+            noteEntry += `: ${this.modalNote}`;
+        }
+
+        if (!this.odontogramData.notes) {
+            this.odontogramData.notes = noteEntry;
+        } else {
+            this.odontogramData.notes += `\n${noteEntry}`;
+        }
+
+        this.saveChanges();
+        console.log('✅ Guardado local completado');
     }
 
     eliminarCambio(): void {
@@ -223,6 +560,9 @@ export class Odontograma implements OnInit, OnDestroy {
 
     cerrarModal(): void {
         this.showModal = false;
+        this.modalPathology = 'caries';
+        this.modalTreatment = '';
+        this.modalNote = '';
     }
 
     saveChanges(): void {
@@ -240,32 +580,32 @@ export class Odontograma implements OnInit, OnDestroy {
 
     getSectionFill(numero: number, sectionIndex: string): string {
         const tooth = this.odontogramData.teeth[numero];
-        if (tooth && tooth.sections[sectionIndex]) {
+        if (tooth?.sections?.[sectionIndex]) {
             return tooth.sections[sectionIndex];
         }
-        return 'white';
+        return 'transparent';
     }
 
     getToothName(num: number): string {
         const names: { [key: number]: string } = {
-            1: 'Incisivo Central',
-            2: 'Incisivo Lateral',
-            3: 'Canino',
+            1: 'Incisiu Central',
+            2: 'Incisiu Lateral',
+            3: 'Caní',
             4: 'Primer Premolar',
-            5: 'Segundo Premolar',
+            5: 'Segon Premolar',
             6: 'Primer Molar',
-            7: 'Segundo Molar',
+            7: 'Segon Molar',
             8: 'Tercer Molar'
         };
         const n = num % 10;
         const q = Math.floor(num / 10);
-        const toothBase = names[n] || 'Diente';
+        const toothBase = names[n] || 'Dent';
 
         let location = '';
-        if (q === 1 || q === 5) location = 'Superior Derecho';
-        if (q === 2 || q === 6) location = 'Superior Izquierdo';
-        if (q === 3 || q === 7) location = 'Inferior Izquierdo';
-        if (q === 4 || q === 8) location = 'Inferior Derecho';
+        if (q === 1 || q === 5) location = 'Superior Dret';
+        if (q === 2 || q === 6) location = 'Superior Esquerre';
+        if (q === 3 || q === 7) location = 'Inferior Esquerre';
+        if (q === 4 || q === 8) location = 'Inferior Dret';
 
         const type = (q > 4) ? 'Temporal ' : '';
         return `${toothBase} ${type}${location}`;
@@ -274,10 +614,10 @@ export class Odontograma implements OnInit, OnDestroy {
     getSectionName(num: number, section: string): string {
         const sectionNames: { [key: string]: string } = {
             s1: 'Superior (Vestibular)',
-            s2: 'Derecha',
-            s3: 'Inferior (Palatino/Lingual)',
-            s4: 'Izquierda',
-            s5: 'Centro (Oclusal)'
+            s2: 'Dret',
+            s3: 'Inferior (Palatí/Lingual)',
+            s4: 'Esquerre',
+            s5: 'Centre (Oclusal)'
         };
         return sectionNames[section] || section;
     }
@@ -289,8 +629,7 @@ export class Odontograma implements OnInit, OnDestroy {
             black: 'Ausencia',
             erase: 'Borrado'
         };
-        
-        // Si hay un tipo de patología, devolver el nombre combinado
+
         if (pathologyType) {
             const pathologyNames: { [key: string]: string } = {
                 caries: 'Caries',
@@ -298,8 +637,12 @@ export class Odontograma implements OnInit, OnDestroy {
             };
             return `${names[colorKey]} - ${pathologyNames[pathologyType]}`;
         }
-        
+
         return names[colorKey] || colorKey;
+    }
+
+    getToothDatabaseId(toothNumber: number): number {
+        return toothNumber;
     }
 
     goBack(): void {
