@@ -4,7 +4,7 @@
         <div class="card-premium">
             <div class="card-title"><i class="bx bx-group"></i> Total Pacients</div>
             <div class="card-main">
-                <div class="card-value">1,234</div>
+                <div class="card-value">{{ totalPatients }}</div>
                 <div class="card-change positive">+12%</div>
             </div>
         </div>
@@ -12,7 +12,7 @@
         <div class="card-premium">
             <div class="card-title"><i class="bx bx-time-five"></i> Cites Avui</div>
             <div class="card-main">
-                <div class="card-value">18</div>
+                <div class="card-value">{{ appointmentsToday }}</div>
                 <div class="card-change positive">+3</div>
             </div>
         </div>
@@ -20,7 +20,7 @@
         <div class="card-premium">
             <div class="card-title"><i class="bx bx-calendar-check"></i> Cites Pendents</div>
             <div class="card-main">
-                <div class="card-value">45</div>
+                <div class="card-value">{{ pendingAppointments }}</div>
                 <div class="card-change negative">-5%</div>
             </div>
         </div>
@@ -41,59 +41,29 @@
                     <div class="panel-title">Cites d'Avui</div>
                     <div class="panel-subtitle">Resumen de les cites programades</div>
                 </div>
-                <span class="badge">18 cites</span>
+
+                <span class="badge">{{ appointmentsToday }} citas</span>
+
             </div>
 
             <div class="appointments-list">
+                @for (appointment of todaysAppointmentsList; track appointment.id) {
                 <div class="appointment">
-                    <div class="appointment-time">09:00</div>
+                    <div class="appointment-time">{{ appointment.hora }}</div>
                     <div class="appointment-main">
-                        <div class="appointment-name">María García</div>
-                        <div class="appointment-treatment">Limpieza dental</div>
-                        <div class="appointment-doctor">Dr. Rodríguez</div>
+                        <div class="appointment-name">{{ appointment.paciente }}</div>
+                        <div class="appointment-treatment">{{ appointment.tratamiento }}</div>
+                        <div class="appointment-doctor">{{ appointment.doctor }}</div>
                     </div>
-                    <div class="appointment-status status-confirmada">confirmada</div>
+                    <div class="appointment-status" [ngClass]="'status-' + appointment.estado">{{ appointment.estado }}</div>
                 </div>
-
+                } @empty {
                 <div class="appointment">
-                    <div class="appointment-time">10:30</div>
                     <div class="appointment-main">
-                        <div class="appointment-name">Carlos Fernández</div>
-                        <div class="appointment-treatment">Ortodoncia - Revisión</div>
-                        <div class="appointment-doctor">Dra. Martínez</div>
+                        <div class="appointment-name">No hay citas para hoy</div>
                     </div>
-                    <div class="appointment-status status-confirmada">confirmada</div>
                 </div>
-
-                <div class="appointment">
-                    <div class="appointment-time">11:00</div>
-                    <div class="appointment-main">
-                        <div class="appointment-name">Ana López</div>
-                        <div class="appointment-treatment">Extracción</div>
-                        <div class="appointment-doctor">Dr. Rodríguez</div>
-                    </div>
-                    <div class="appointment-status status-pendiente">pendiente</div>
-                </div>
-
-                <div class="appointment">
-                    <div class="appointment-time">14:00</div>
-                    <div class="appointment-main">
-                        <div class="appointment-name">Juan Pérez</div>
-                        <div class="appointment-treatment">Implante dental</div>
-                        <div class="appointment-doctor">Dr. Sánchez</div>
-                    </div>
-                    <div class="appointment-status status-confirmada">confirmada</div>
-                </div>
-
-                <div class="appointment">
-                    <div class="appointment-time">15:30</div>
-                    <div class="appointment-main">
-                        <div class="appointment-name">Laura Ruiz</div>
-                        <div class="appointment-treatment">Blanqueamiento</div>
-                        <div class="appointment-doctor">Dra. Martínez</div>
-                    </div>
-                    <div class="appointment-status status-pendiente">pendiente</div>
-                </div>
+                }
             </div>
         </div>
 
