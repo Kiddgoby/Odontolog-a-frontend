@@ -418,11 +418,17 @@ export class Odontograma implements OnInit, OnDestroy {
             return;
         }
 
+        const statusItem = this.backendStatuses.find(s =>
+            (this.modalColor === 'red' && s.name === 'Pending') ||
+            (this.modalColor === 'blue' && s.name === 'Done')
+        );
+
         const detailData = {
             odontogramId: this.odontogramId,
             toothId: this.getToothDatabaseId(this.modalDiente),
             pathologyId: pathologyItem?.backendId,
             treatmentId: treatmentItem?.backendId,
+            statusId: statusItem?.id,
             face: this.modalSeccion,
             notes: this.modalNote || ''
         };
