@@ -83,11 +83,11 @@ export class Odontograma implements OnInit, OnDestroy {
     ];
 
     pathologyList: { key: string; hex: string; label: string; backendId?: number }[] = [
-        { key: 'caries', hex: '#E53935', label: 'Caries' },
+        { key: 'ausencia', hex: '#000000', label: 'Absència' },
+        { key: 'caries', hex: '#E53935', label: 'Càries' },
         { key: 'gingivitis', hex: '#FB8C00', label: 'Gingivitis' },
-        { key: 'periodontitis', hex: '#8E24AA', label: 'Periodontitis' },
-        { key: 'fractura', hex: '#5D4037', label: 'Fractura' },
-        { key: 'ausencia', hex: '#212121', label: 'Ausencia' }
+        { key: 'periodontitis', hex: '#6D4C41', label: 'Periodontitis' },
+        { key: 'fracture', hex: '#424242', label: 'Fractura' },
     ];
 
     treatmentList: { key: string; hex: string; label: string; backendId?: number }[] = [
@@ -145,6 +145,13 @@ export class Odontograma implements OnInit, OnDestroy {
     selectPathology(key: string): void {
         console.log('🦷 Patología seleccionada:', key);
         this.modalPathology = key;
+        
+        // Si se selecciona ausencia, limpiar cualquier tratamiento
+        if (key === 'ausencia') {
+            console.log('🔄 Limpiando tratamiento por selección de ausencia');
+            this.modalTreatment = '';
+        }
+        
         this.closePopup();
     }
 
@@ -444,17 +451,12 @@ export class Odontograma implements OnInit, OnDestroy {
         console.log('modalTreatment:', this.modalTreatment);
         console.log('=============================');
 
-        const payload = JSON.stringify(detailData, null, 2);
-        console.log('🚀 Iniciando guardado de detalle:', {
-            url: `${this.odontogramaService['apiUrl']}/odontogram-details`,
-            data: detailData
-        });
-
+        // Guardar en el backend
         this.odontogramaService.saveDetail(detailData).subscribe({
             next: (response) => {
-                console.log('✅ RESPUESTA SERVIDOR:', response);
-                console.log('✨ Detalle guardado con éxito en DB');
-
+                console.log('✅ Detalle guardado exitosamente en la base de datos:', response);
+                
+                // Actualizar UI local
                 if (!tooth.sectionNotes) tooth.sectionNotes = {};
                 if (!tooth.pathologyTypes) tooth.pathologyTypes = {};
                 if (!tooth.treatmentTypes) tooth.treatmentTypes = {};
@@ -464,10 +466,29 @@ export class Odontograma implements OnInit, OnDestroy {
                     tooth.treatmentTypes[this.modalSeccion] = this.modalTreatment;
                 }
 
-                let finalColor = this.colors[this.modalColor as keyof typeof this.colors] || '#ffffff';
-                if (treatmentItem) finalColor = treatmentItem.hex;
-                tooth.sections[this.modalSeccion] = finalColor;
-                tooth.sectionNotes[this.modalSeccion] = this.modalNote;
+                // Si es ausencia, marcar el diente completo como ausente (mostrar X)
+                if (this.modalPathology === 'ausencia') {
+                    console.log('🦷 Marcando diente completo como ausente (mostrar X)');
+                    
+                    // Marcar el diente completo como ausente para mostrar la X
+                    tooth.absent = true;
+                    
+                    // Limpiar todas las secciones y datos
+                    tooth.sections = {};
+                    if (tooth.sectionNotes) tooth.sectionNotes = {};
+                    if (tooth.pathologyTypes) tooth.pathologyTypes = {};
+                    if (tooth.treatmentTypes) tooth.treatmentTypes = {};
+                    
+                    // Guardar la patología de ausencia en la sección seleccionada
+                    tooth.pathologyTypes[this.modalSeccion] = 'ausencia';
+                } else {
+                    // Comportamiento normal para otras patologías
+                    let finalColor = this.colors[this.modalColor as keyof typeof this.colors] || '#ffffff';
+                    if (treatmentItem) finalColor = treatmentItem.hex;
+                    tooth.sections[this.modalSeccion] = finalColor;
+                    tooth.sectionNotes[this.modalSeccion] = this.modalNote;
+                    tooth.absent = false;
+                }
 
                 let noteEntry = `${this.getToothName(this.modalDiente)} (${this.getSectionName(this.modalDiente, this.modalSeccion)}): `;
                 noteEntry += `${this.getItemLabel(this.modalPathology, 'pathology')}`;
@@ -488,26 +509,8 @@ export class Odontograma implements OnInit, OnDestroy {
                 this.cerrarModal();
             },
             error: (error) => {
-                console.error('❌ ERROR AL GUARDAR:', error);
-
-                let errorMessage = 'Error al guardar en el servidor';
-                let diagnosticInfo = '';
-
-                if (error.status === 0) {
-                    errorMessage = 'No se puede conectar con el servidor';
-                    diagnosticInfo = 'Asegúrate de que Symfony esté corriendo (symfony server:start)';
-                } else if (error.status === 500) {
-                    errorMessage = 'Error interno del servidor (500)';
-                    diagnosticInfo = error.error?.error || 'Revisa los logs de Symfony para más detalles.';
-                } else {
-                    errorMessage = error.error?.message || errorMessage;
-                }
-
-                alert(`${errorMessage}\n\n${diagnosticInfo}`);
-
-                console.log('🔄 Fallback: Guardando localmente...');
-                this.guardarLocalmente(tooth, pathologyItem, treatmentItem);
-                this.cerrarModal();
+                console.error('❌ Error al guardar en el servidor:', error);
+                alert('Error al guardar. Por favor, intenta nuevamente.');
             }
         });
     }
