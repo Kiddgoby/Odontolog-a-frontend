@@ -359,7 +359,7 @@ tbody tr:hover {
 }
 
 .btn-complete {
-  background-color: #34a853;
+  background-color: #2c7a3a;
   color: white;
   border: none;
   padding: 0.75rem;
@@ -370,10 +370,15 @@ tbody tr:hover {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-complete:hover {
+  background-color: #245631;
 }
 
 .btn-delete {
-  background-color: #ea4335;
+  background-color: #c5221f;
   color: white;
   border: none;
   padding: 0.75rem;
@@ -384,4 +389,9 @@ tbody tr:hover {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-delete:hover {
+  background-color: #a51814;
 }
