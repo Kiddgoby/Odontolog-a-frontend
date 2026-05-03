@@ -13,8 +13,8 @@ export class Tratamientos implements OnInit {
   private treatmentService = inject(TreatmentService);
 
   searchTerm = '';
-  selectedCategory = 'Todos';
-  categorias = ['Todos', 'Preventiva', 'Ortodoncia', 'Cirugía', 'Estética', 'Conservadora'];
+  selectedCategory = 'Tots';
+  categorias = ['Tots', 'Preventiva', 'Ortodòncia', 'Cirurgia', 'Estètica', 'Conservadora'];
 
   tratamientos: Tratamiento[] = [];
   loading = false;
@@ -39,8 +39,8 @@ export class Tratamientos implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar tratamientos:', err);
-        this.error = 'No se pudieron cargar los tratamientos desde el backend.';
+        console.error('Error al carregar tractaments:', err);
+        this.error = "No s'han pogut carregar els tractaments des del backend.";
         this.loading = false;
       }
     });
@@ -55,7 +55,7 @@ export class Tratamientos implements OnInit {
         nombreField.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         descripcionField.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
-      const matchCategory = this.selectedCategory === 'Todos' || categoriaField === this.selectedCategory;
+      const matchCategory = this.selectedCategory === 'Tots' || categoriaField === this.selectedCategory;
       return matchSearch && matchCategory;
     });
   }
@@ -109,8 +109,8 @@ export class Tratamientos implements OnInit {
         this.cerrarFormulario();
       },
       error: (err) => {
-        console.error('Error al guardar el tratamiento:', err);
-        this.error = 'Hubo un error al guardar el tratamiento. Por favor, inténtelo de nuevo.';
+        console.error('Error al desar el tractament:', err);
+        this.error = 'Hi ha hagut un error en desar el tractament. Si us plau, torna-ho a provar.';
       }
     });
   }
@@ -121,11 +121,11 @@ export class Tratamientos implements OnInit {
 
   eliminar(id: number) {
     if (!id || id === 0) {
-      alert('Error: ID de tratamiento no válido');
+      alert('Error: ID de tractament no vàlid');
       return;
     }
     
-    if (confirm('¿Estás seguro de que deseas eliminar este tratamiento?')) {
+    if (confirm('Estàs segur que vols eliminar aquest tractament?')) {
       console.log(`Eliminando tratamiento con id: ${id}`);
       this.treatmentService.deleteTratamiento(id).subscribe({
         next: () => {
@@ -133,8 +133,8 @@ export class Tratamientos implements OnInit {
           this.cargarTratamientos();
         },
         error: (err) => {
-          console.error('Error al eliminar el tratamiento:', err);
-          this.error = `Error al eliminar: ${err.error?.message || err.message || 'Intenta de nuevo'}`;
+          console.error('Error en eliminar el tractament:', err);
+          this.error = `Error en eliminar: ${err.error?.message || err.message || 'Torna-ho a provar'}`;
         }
       });
     }
