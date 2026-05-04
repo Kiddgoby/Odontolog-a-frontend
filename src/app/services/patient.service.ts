@@ -121,6 +121,16 @@ export class PatientService {
     return this.http.post<PatientData>(this.apiUrl, patient);
   }
 
+  deletePatient(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => console.log(`Paciente ${id} eliminado correctamente`)),
+      catchError(error => {
+        console.error(`Error al eliminar el paciente ${id}`, error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   updateOdontogram(patientId: number, data: OdontogramData): void {
     this.odontogramUpdateSubject.next({ patientId, data });
   }

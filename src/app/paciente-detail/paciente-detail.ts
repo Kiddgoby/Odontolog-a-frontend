@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PatientService, PatientData } from '../services/patient.service';
 import { NewAppointment } from '../new-appointment/new-appointment';
 
@@ -17,6 +17,7 @@ export class PacienteDetail implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private patientService: PatientService
   ) { }
 
@@ -39,4 +40,24 @@ export class PacienteDetail implements OnInit {
     this.isNewAppointmentModalOpen = false;
     this.loadPatient(); // Refresh data if needed
   }
+
+  deletePatient(): void {
+    if (!this.patient) return;
+
+    const confirmDelete = confirm(`¿Estás seguro de que deseas eliminar a ${this.patient.firstName} ${this.patient.lastName}? Esta acción no se puede deshacer.`);
+
+    if (confirmDelete) {
+      this.patientService.deletePatient(this.patient.id).subscribe({
+        next: () => {
+          console.log('Paciente eliminado exitosamente');
+          this.router.navigate(['/patient']);
+        },
+        error: (error) => {
+          console.error('Error al eliminar el paciente:', error);
+          alert('Error al eliminar el paciente. Por favor, intenta de nuevo.');
+        }
+      });
+    }
+  }
 }
+
