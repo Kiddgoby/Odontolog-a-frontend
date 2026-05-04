@@ -11,7 +11,10 @@
         <h1>{{ patient.firstName }} {{ patient.lastName }}</h1>
         <p>{{ patient.age || '-' }} años</p>
       </div>
-      <button class="btn-edit">Editar Paciente</button>
+      <div class="button-group">
+        <button class="btn-edit" (click)="openEditModal()">Editar Paciente</button>
+        <button class="btn-delete" (click)="deletePatient()">Eliminar Paciente</button>
+      </div>
     </div>
   </div>
 
@@ -132,4 +135,93 @@
         (created)="closeNewAppointmentModal()"></app-new-appointment>
     </div>
   </div>
-</div>
+
+  <!-- Edit Patient Modal -->
+  <div class="modal-overlay" *ngIf="isEditModalOpen" (click)="closeEditModal()">
+    <div class="modal-content edit-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Editar Paciente</h2>
+        <button class="close-btn" (click)="closeEditModal()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+
+      <div *ngIf="editErrorMessage" class="error-message">
+        {{ editErrorMessage }}
+      </div>
+
+      <form [formGroup]="editForm" (ngSubmit)="savePatientChanges()" class="edit-form">
+        <!-- Personal Information -->
+        <div class="form-section">
+          <h3>Información Personal</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="edit-firstName">Nombre</label>
+              <input type="text" id="edit-firstName" formControlName="firstName" placeholder="Nombre">
+            </div>
+            <div class="form-group">
+              <label for="edit-lastName">Apellidos</label>
+              <input type="text" id="edit-lastName" formControlName="lastName" placeholder="Apellidos">
+            </div>
+            <div class="form-group">
+              <label for="edit-age">Edad</label>
+              <input type="number" id="edit-age" formControlName="age" placeholder="Edad">
+            </div>
+            <div class="form-group">
+              <label for="edit-nationalId">DNI/NIE</label>
+              <input type="text" id="edit-nationalId" formControlName="nationalId" placeholder="DNI/NIE">
+            </div>
+            <div class="form-group">
+              <label for="edit-phone">Teléfono</label>
+              <input type="tel" id="edit-phone" formControlName="phone" placeholder="Teléfono">
+            </div>
+            <div class="form-group">
+              <label for="edit-email">Email</label>
+              <input type="email" id="edit-email" formControlName="email" placeholder="Email">
+            </div>
+            <div class="form-group full-width">
+              <label for="edit-address">Dirección</label>
+              <input type="text" id="edit-address" formControlName="address" placeholder="Dirección">
+            </div>
+          </div>
+        </div>
+
+        <!-- Medical Information -->
+        <div class="form-section">
+          <h3>Información Médica</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="edit-medicationAllergies">Alergias a Medicamentos</label>
+              <textarea id="edit-medicationAllergies" formControlName="medicationAllergies" placeholder="Alergias..."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="edit-healthStatus">Estado de Salud</label>
+              <textarea id="edit-healthStatus" formControlName="healthStatus" placeholder="Estado de salud..."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="edit-familyHistory">Historial Familiar</label>
+              <textarea id="edit-familyHistory" formControlName="familyHistory" placeholder="Historial familiar..."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="edit-lifestyleHabits">Hábitos de Vida</label>
+              <textarea id="edit-lifestyleHabits" formControlName="lifestyleHabits" placeholder="Hábitos de vida..."></textarea>
+            </div>
+            <div class="form-group full-width">
+              <label for="edit-billingData">Datos de Facturación/Seguro</label>
+              <input type="text" id="edit-billingData" formControlName="billingData" placeholder="Datos de facturación">
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="closeEditModal()">Cancelar</button>
+          <button type="submit" class="btn-submit" [disabled]="isSaving || !editForm.valid">
+            <i class="fa-solid fa-save" *ngIf="!isSaving"></i>
+            <i class="fa-solid fa-circle-notch fa-spin" *ngIf="isSaving"></i>
+            {{ isSaving ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
