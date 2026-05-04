@@ -85,13 +85,13 @@ export class Odontograma implements OnInit, OnDestroy {
     pathologyList: { key: string; hex: string; label: string; backendId?: number }[] = [
         { key: 'ausencia', hex: '#000000', label: 'Absència' },
         { key: 'caries', hex: '#E53935', label: 'Càries' },
-        { key: 'gingivitis', hex: '#FB8C00', label: 'Gingivitis' },
+        { key: 'fisura', hex: '#FFC107', label: 'Fisura' },
         { key: 'periodontitis', hex: '#6D4C41', label: 'Periodontitis' },
         { key: 'fracture', hex: '#424242', label: 'Fractura' },
     ];
 
     treatmentList: { key: string; hex: string; label: string; backendId?: number }[] = [
-        { key: 'limpieza', hex: '#26A69A', label: 'Limpieza' },
+        { key: 'rayosx', hex: '#26A69A', label: 'Rayos X' },
         { key: 'obsturacion', hex: '#1E88E5', label: 'Obsturacion' },
         { key: 'endodoncia', hex: '#8E24AA', label: 'Endodoncia' },
         { key: 'extraccion', hex: '#D32F2F', label: 'Extraccion' },
@@ -290,7 +290,7 @@ export class Odontograma implements OnInit, OnDestroy {
     private getPathologyColor(desc: string): string {
         const colors: { [key: string]: string } = {
             'Caries': '#E53935',
-            'Gingivitis': '#FB8C00',
+            'Fisura': '#FFC107',
             'Periodontitis': '#8E24AA',
             'Fractura': '#5D4037',
             'Ausencia': '#212121'
@@ -300,7 +300,7 @@ export class Odontograma implements OnInit, OnDestroy {
 
     private getTreatmentColor(name: string): string {
         const colors: { [key: string]: string } = {
-            'Limpieza': '#26A69A',
+            'Rayos X': '#26A69A',
             'Obsturacion': '#1E88E5',
             'Endodoncia': '#8E24AA',
             'Extraccion': '#D32F2F',
