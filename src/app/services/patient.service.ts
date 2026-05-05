@@ -131,6 +131,16 @@ export class PatientService {
     );
   }
 
+  updatePatient(id: number, patient: Partial<PatientData>): Observable<PatientData> {
+    return this.http.put<PatientData>(`${this.apiUrl}/${id}`, patient).pipe(
+      tap(() => console.log(`Paciente ${id} actualizado correctamente`)),
+      catchError(error => {
+        console.error(`Error al actualizar el paciente ${id}`, error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   updateOdontogram(patientId: number, data: OdontogramData): void {
     this.odontogramUpdateSubject.next({ patientId, data });
   }
