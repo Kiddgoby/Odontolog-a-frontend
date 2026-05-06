@@ -12,6 +12,7 @@ import { NewAppointment } from '../new-appointment/new-appointment';
   templateUrl: './paciente-detail.html',
   styleUrl: './paciente-detail.css'
 })
+
 export class PacienteDetail implements OnInit {
   patient: PatientData | undefined;
   isNewAppointmentModalOpen: boolean = false;
@@ -68,7 +69,7 @@ export class PacienteDetail implements OnInit {
 
   openEditModal(): void {
     if (!this.patient) return;
-    
+
     this.editForm = this.formBuilder.group({
       firstName: [this.patient.firstName, Validators.required],
       lastName: [this.patient.lastName, Validators.required],
@@ -83,7 +84,7 @@ export class PacienteDetail implements OnInit {
       lifestyleHabits: [this.patient.lifestyleHabits],
       billingData: [this.patient.billingData]
     });
-    
+
     this.isEditModalOpen = true;
     this.editErrorMessage = '';
   }
