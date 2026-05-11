@@ -141,10 +141,50 @@
       </div>
     </div>
 
+
+    <!-- Consentimiento de Anestesia -->
+    <div class="form-section card">
+      <div class="section-title">
+        <i class="fa-solid fa-file-signature"></i>
+        <h3>Consentiment</h3>
+      </div>
+
+      <div class="form-group full-width checkbox-group">
+        
+        <label class="checkbox-container">
+          <input type="checkbox" formControlName="dentalClinicConsent">
+          <span class="custom-checkbox"></span>
+          Accepto els termes de Dental Clinic
+        </label>
+
+        <div class="error-obligatori"
+            *ngIf="patientForm.get('dentalClinicConsent')?.touched &&
+                    patientForm.get('dentalClinicConsent')?.invalid">
+          Has de marcar-ho
+        </div>
+
+        <label class="checkbox-container">
+          <input type="checkbox" formControlName="anesthesiaConsent">
+          <span class="custom-checkbox"></span>
+          Accepto els termes per a l’anestèsia
+        </label>
+
+        <!-- ❗ Solo aparece al pulsar Guardar -->
+        <div class="error-obligatori"
+            *ngIf="patientForm.get('anesthesiaConsent')?.touched &&
+                    patientForm.get('anesthesiaConsent')?.invalid">
+          Has de marcar-ho
+        </div>
+
+      </div>
+    </div>
+
+
+
     <!-- Form Actions -->
     <div class="form-actions">
       <button type="button" routerLink="/patients" class="btn-cancel">Cancel·lar</button>
-      <button type="submit" class="btn-submit" [disabled]="isSaving || !patientForm.valid">
+      <button type="submit" class="btn-submit" [disabled]="isSaving">
         <i class="fa-solid fa-save" *ngIf="!isSaving"></i>
         <i class="fa-solid fa-circle-notch fa-spin" *ngIf="isSaving"></i>
         {{ isSaving ? 'Guardant...' : 'Guardar Pacient' }}
