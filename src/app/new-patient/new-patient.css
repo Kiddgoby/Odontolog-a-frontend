@@ -242,3 +242,70 @@ textarea {
     justify-content: center;
   }
 }
+
+/* ====================== */
+
+.checkbox-group {
+  margin-top: 1rem;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e293b;
+  user-select: none;
+}
+
+.checkbox-container input {
+  display: none;
+}
+
+/* Caja visual */
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #3b82f6;
+  border-radius: 0.35rem;
+  display: inline-block;
+  position: relative;
+  transition: all 0.2s;
+}
+
+/* Marca de check */
+.custom-checkbox::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: #3b82f6;
+  top: 50%;
+  left: 50%;
+  transform: scale(0) translate(-50%, -50%);
+  border-radius: 0.2rem;
+  transition: all 0.2s ease;
+}
+
+/* Cuando está marcado */
+.checkbox-container input:checked + .custom-checkbox::after {
+  transform: scale(1) translate(-50%, -50%);
+}
+.obligatori-wrapper {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.obligatori-label {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.error-obligatori {
+  color: red;
+  font-weight: 600;
+}
