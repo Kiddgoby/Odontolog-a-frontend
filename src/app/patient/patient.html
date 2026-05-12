@@ -40,11 +40,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let patient of filteredPatients">
+        <tr *ngFor="let patient of filteredPatients" [class.danger-row]="isDangerousPatient(patient)">
           <td>
             <div class="patient-info">
               <span class="patient-name">{{ patient.firstName }} {{ patient.lastName }}</span>
               <span class="patient-age">{{ patient.age || '-' }} anys</span>
+              <span *ngIf="isDangerousPatient(patient)" class="danger-badge">
+                <i class="fa-solid fa-triangle-exclamation"></i> Peligro
+              </span>
             </div>
           </td>
           <td>

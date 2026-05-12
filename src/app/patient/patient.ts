@@ -50,6 +50,16 @@ export class Patient implements OnInit {
     );
   }
 
+  isDangerousPatient(patient: PatientData): boolean {
+    const fields = [
+      patient.medicationAllergies,
+      patient.healthStatus,
+      patient.familyHistory,
+      patient.lifestyleHabits,
+    ];
+    return fields.some(value => typeof value === 'string' && value.trim().length > 0);
+  }
+
   openNewAppointmentModal(): void {
     this.isNewAppointmentModalOpen = true;
   }
