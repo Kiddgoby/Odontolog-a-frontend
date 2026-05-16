@@ -87,7 +87,7 @@ export class Odontograma implements OnInit, OnDestroy {
         { key: 'caries', hex: '#E53935', label: 'Càries' },
         { key: 'fisura', hex: '#FFC107', label: 'Fisura' },
         { key: 'periodontitis', hex: '#6D4C41', label: 'Periodontitis' },
-        { key: 'fracture', hex: '#424242', label: 'Fractura' },
+        { key: 'fracture', hex: '#FFEB3B', label: 'Fractura' },
     ];
 
     treatmentList: { key: string; hex: string; label: string; backendId?: number }[] = [
@@ -292,7 +292,7 @@ export class Odontograma implements OnInit, OnDestroy {
             'Caries': '#E53935',
             'Fisura': '#FFC107',
             'Periodontitis': '#8E24AA',
-            'Fractura': '#5D4037',
+            'Fractura': '#FFEB3B',
             'Ausencia': '#212121'
         };
         return colors[desc] || '#BDBDBD';
