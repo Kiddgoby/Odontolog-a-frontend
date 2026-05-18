@@ -395,3 +395,84 @@ tbody tr:hover {
 .btn-delete:hover {
   background-color: #a51814;
 }
+
+/* Fila de cita con paciente que tiene alergias */
+tbody tr.has-allergies {
+  background-color: #fdf2f2;
+}
+
+tbody tr.has-allergies:hover {
+  background-color: #fde8e8;
+}
+
+tbody tr.has-allergies td {
+  color: #9b1c1c;
+}
+
+tbody tr.has-allergies .patient-name {
+  color: #9b1c1c;
+}
+
+tbody tr.has-allergies .date {
+  color: #9b1c1c;
+}
+
+/* Alergias en el Popup de Editar Cita */
+.allergy-card {
+  background-color: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(229, 62, 62, 0.05);
+}
+
+.allergy-header {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #c53030;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid #fed7d7;
+  padding-bottom: 0.5rem;
+}
+
+.allergy-item label {
+  display: block;
+  font-size: 0.8rem;
+  color: #e53e3e;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.allergy-item p {
+  margin: 0;
+  color: #9b2c2c;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Hacer que los iconos y badges de la fila con alergias también sean rojos */
+tbody tr.has-allergies .date-icon {
+  background-color: #fde8e8;
+  color: #dc2626;
+}
+
+tbody tr.has-allergies .patient-icon {
+  background-color: #fde8e8;
+  color: #dc2626;
+}
+
+tbody tr.has-allergies .time-badge {
+  background-color: #fde8e8;
+  color: #c53030;
+}
+
+tbody tr.has-allergies .status-badge {
+  background-color: #fde8e8;
+  color: #c53030;
+}

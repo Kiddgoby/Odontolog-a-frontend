@@ -36,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let app of filteredAppointments" (click)="openPopup(app)">
+        <tr *ngFor="let app of filteredAppointments" (click)="openPopup(app)" [class.has-allergies]="app.has_allergies">
           <td>
             <div class="date-time">
               <span class="date-icon"><i class="fa-regular fa-calendar"></i></span>
@@ -77,6 +77,16 @@
         <div class="appointment-summary">
           <p><strong>Paciente:</strong> {{ selectedAppointment.paciente }}</p>
           <p><strong>Tratamiento:</strong> {{ selectedAppointment.tratamiento }}</p>
+        </div>
+
+        <div class="allergy-card" *ngIf="selectedAppointment.has_allergies">
+          <div class="allergy-header">
+            <i class="fa-solid fa-triangle-exclamation"></i> Información Médica
+          </div>
+          <div class="allergy-item">
+            <label>Alergias</label>
+            <p>{{ selectedAppointment.medication_allergies }}</p>
+          </div>
         </div>
 
         <div class="form-group">
