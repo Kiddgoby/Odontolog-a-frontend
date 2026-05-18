@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, throwError } from 'rxjs';
+import { Observable, catchError, map, throwError, forkJoin, of, switchMap } from 'rxjs';
 
 export interface AppointmentData {
   id: number;
@@ -17,6 +17,8 @@ export interface AppointmentData {
   dentist_id?: number;
   treatment_id?: number;
   box_id?: number;
+  medication_allergies?: string;
+  has_allergies?: boolean;
 }
 
 @Injectable({
@@ -40,10 +42,39 @@ export class AppointmentService {
 
   getAppointments(): Observable<AppointmentData[]> {
     console.log(`AppointmentService: GET ${this.apiUrl}`);
-    return this.http.get<any>(this.apiUrl).pipe(
-      map(response => {
-        const rawArray = Array.isArray(response) ? response : (response?.data ?? []);
-        return rawArray.map((item: any) => this.mapBackendAppointment(item));
+    return forkJoin({
+      appointments: this.http.get<any>(this.apiUrl),
+      patients: this.http.get<any>('http://localhost:8000/api/patients').pipe(
+        catchError(err => {
+          console.error('Error fetching patients in AppointmentService', err);
+          return of([]);
+        })
+      )
+    }).pipe(
+      map(({ appointments, patients }) => {
+        const rawAppointments = Array.isArray(appointments) ? appointments : (appointments?.data ?? []);
+        const rawPatients = Array.isArray(patients) ? patients : (patients?.data ?? []);
+
+        const allergiesMap = new Map<number, string>();
+        rawPatients.forEach((p: any) => {
+          if (p.id) {
+            allergiesMap.set(Number(p.id), p.medicationAllergies || p.medication_allergies || '');
+          }
+        });
+
+        return rawAppointments.map((item: any) => {
+          const mapped = this.mapBackendAppointment(item);
+          const patientId = mapped.patient_id;
+          if (patientId && allergiesMap.has(patientId)) {
+            const allergies = allergiesMap.get(patientId) || '';
+            mapped.medication_allergies = allergies;
+            const lowerAllergies = allergies.trim().toLowerCase();
+            mapped.has_allergies = allergies !== '' && lowerAllergies !== 'none' && lowerAllergies !== 'ninguna' && lowerAllergies !== 'ninguno' && lowerAllergies !== 'no' && lowerAllergies !== 'sin alergias';
+          } else {
+            mapped.has_allergies = false;
+          }
+          return mapped;
+        });
       }),
       catchError(error => {
         console.error('AppointmentService getAppointments error', error);
@@ -66,20 +97,20 @@ export class AppointmentService {
     }
 
     // Extraer nombres con múltiples fallbacks
-    const paciente = raw.patient_name || raw.paciente || 
-                     (raw.patient ? `${raw.patient?.firstName || ''} ${raw.patient?.lastName || ''}`.trim() : '') ||
-                     'Paciente';
-    
+    const paciente = raw.patient_name || raw.paciente ||
+      (raw.patient ? `${raw.patient?.firstName || ''} ${raw.patient?.lastName || ''}`.trim() : '') ||
+      'Paciente';
+
     const tratamiento = raw.treatment_name || raw.tratamiento || raw.consultationReason ||
-                        (raw.treatment ? raw.treatment?.treatmentName || raw.treatment?.name : '') ||
-                        'Tratamiento';
-    
+      (raw.treatment ? raw.treatment?.treatmentName || raw.treatment?.name : '') ||
+      'Tratamiento';
+
     const doctor = raw.dentist_name || raw.doctor ||
-                   (raw.dentist ? `${raw.dentist?.firstName || ''} ${raw.dentist?.lastName || ''}`.trim() : '') ||
-                   'Doctor';
-    
-    const box = raw.box_name || raw.box || 
-                (raw.box ? raw.box?.name || raw.box?.number : '') || '';
+      (raw.dentist ? `${raw.dentist?.firstName || ''} ${raw.dentist?.lastName || ''}`.trim() : '') ||
+      'Doctor';
+
+    const box = raw.box_name || raw.box?.name || raw.box?.number || '';
+    const medication_allergies = raw.patient?.medicationAllergies || raw.patient?.medication_allergies || raw.medicationAllergies || raw.medication_allergies || '';
 
     // Normalizar estado
     let estado: 'confirmada' | 'pendiente' | 'completada' = 'pendiente';
@@ -107,13 +138,29 @@ export class AppointmentService {
       patient_id: raw.patient?.id || raw.patientId,
       dentist_id: raw.dentist?.id || raw.dentistId,
       treatment_id: raw.treatment?.id || raw.treatmentId,
-      box_id: raw.box?.id || raw.boxId
+      box_id: raw.box?.id || raw.boxId,
+      medication_allergies: medication_allergies
     };
   }
 
   getAppointment(id: number): Observable<AppointmentData> {
     return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
-      map(raw => this.mapBackendAppointment(raw)),
+      switchMap(raw => {
+        const mapped = this.mapBackendAppointment(raw);
+        if (mapped.patient_id) {
+          return this.http.get<any>(`http://localhost:8000/api/patients/${mapped.patient_id}`).pipe(
+            map(patient => {
+              const allergies = patient.medicationAllergies || patient.medication_allergies || '';
+              mapped.medication_allergies = allergies;
+              const lowerAllergies = allergies.trim().toLowerCase();
+              mapped.has_allergies = allergies !== '' && lowerAllergies !== 'none' && lowerAllergies !== 'ninguna' && lowerAllergies !== 'ninguno' && lowerAllergies !== 'no' && lowerAllergies !== 'sin alergias';
+              return mapped;
+            }),
+            catchError(() => of(mapped))
+          );
+        }
+        return of(mapped);
+      }),
       catchError(error => {
         console.error('AppointmentService getAppointment error', error);
         return throwError(() => error);
@@ -137,7 +184,7 @@ export class AppointmentService {
       asistido: 'pendiente',
       duracion: '30 min'
     };
-    
+
     console.log('AppointmentService: sending payload', payload);
 
     return this.http.post<any>(this.apiUrl, payload).pipe(
