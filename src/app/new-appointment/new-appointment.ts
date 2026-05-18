@@ -37,6 +37,7 @@ export class NewAppointment implements OnInit {
   filteredTreatments: Tratamiento[] = [];
   showSuggestions: boolean = false;
   doctorTreatments: Tratamiento[] = []; // Tratamientos del doctor seleccionado
+  existingAppointments: any[] = []; // Citas existentes para evitar colisiones
 
   constructor(
     private appointmentService: AppointmentService,
@@ -83,6 +84,14 @@ export class NewAppointment implements OnInit {
     }
   }
 
+  selectedPatientAllergies: string = '';
+
+  hasAllergies(medicationAllergies: string | undefined): boolean {
+    if (!medicationAllergies) return false;
+    const lower = medicationAllergies.trim().toLowerCase();
+    return lower !== '' && lower !== 'none' && lower !== 'ninguna' && lower !== 'ninguno' && lower !== 'no' && lower !== 'sin alergias';
+  }
+
   onPatientChange(value: number | string | Event): void {
     const patientId = typeof value === 'number'
       ? value
@@ -97,6 +106,12 @@ export class NewAppointment implements OnInit {
       this.patientService.getPatientById(patientId).subscribe({
         next: (patient) => {
           console.log('Datos del paciente:', patient);
+          this.selectedPatientAllergies = patient.medicationAllergies || '';
+
+          if (this.hasAllergies(this.selectedPatientAllergies)) {
+            this.appointmentData.hora = '19:00';
+            console.log('Paciente con alergias/infectado, forzando hora a las 19:00');
+          }
 
           if (patient.boxId) {
             this.appointmentData.box_id = patient.boxId;
@@ -131,6 +146,13 @@ export class NewAppointment implements OnInit {
   loadData(): void {
     this.patientService.getPatients().subscribe((data: PatientData[]) => {
       this.patients = data;
+      if (this.appointmentData.patient_id) {
+        const patient = data.find(p => p.id === this.appointmentData.patient_id);
+        if (patient && this.hasAllergies(patient.medicationAllergies)) {
+          this.appointmentData.hora = '19:00';
+          console.log('Paciente pre-seleccionado con alergias, estableciendo hora a las 19:00');
+        }
+      }
     });
     this.dentistService.getDentists().subscribe((data: DentistData[]) => {
       this.doctors = data;
@@ -144,6 +166,16 @@ export class NewAppointment implements OnInit {
       // Seleccionar el primer box por defecto si está disponible
       if (data.length > 0) {
         this.appointmentData.box_id = data[0].id;
+      }
+    });
+
+    this.appointmentService.getAppointments().subscribe({
+      next: (data) => {
+        this.existingAppointments = data;
+        console.log('Citas existentes cargadas para colisiones:', data.length);
+      },
+      error: (err) => {
+        console.error('Error cargando citas para colisiones:', err);
       }
     });
   }
@@ -245,7 +277,56 @@ export class NewAppointment implements OnInit {
     }
   }
 
+  isTimeInvalid(): boolean {
+    if (!this.appointmentData.hora) return false;
+    const [hours, minutes] = this.appointmentData.hora.split(':').map(Number);
+    
+    // Rule 1: No appointments starting at or after 20:00
+    if (hours >= 20) return true;
+
+    // Rule 2: Allergic/infectious patient must be scheduled at 19:00 (last slot)
+    if (this.hasSelectedPatientAllergies()) {
+      return this.appointmentData.hora !== '19:00';
+    }
+    
+    return false;
+  }
+
+  isAfterClosingTime(): boolean {
+    if (!this.appointmentData.hora) return false;
+    const [hours, minutes] = this.appointmentData.hora.split(':').map(Number);
+    return hours >= 20;
+  }
+
+  hasSelectedPatientAllergies(): boolean {
+    if (!this.appointmentData.patient_id) return false;
+    const patient = this.patients.find(p => p.id === this.appointmentData.patient_id);
+    const allergies = patient ? (patient.medicationAllergies || '') : this.selectedPatientAllergies;
+    return this.hasAllergies(allergies);
+  }
+
+  getCollisionError(): string | null {
+    if (!this.appointmentData.fecha || !this.appointmentData.hora) return null;
+    
+    for (const app of this.existingAppointments) {
+      if (app.fecha === this.appointmentData.fecha && app.hora === this.appointmentData.hora) {
+        // Verificar colisión de doctor (mismo doctor a la misma hora)
+        if (this.appointmentData.dentist_id && Number(app.dentist_id) === Number(this.appointmentData.dentist_id)) {
+          return "Aquest doctor ja té una cita programada a aquesta hora.";
+        }
+        // Verificar colisión de consultorio / Box (mismo box a la misma hora)
+        if (this.appointmentData.box_id && Number(app.box_id) === Number(this.appointmentData.box_id)) {
+          return "Aquest consultori (Box) ja està ocupat a aquesta hora.";
+        }
+      }
+    }
+    return null;
+  }
+
   onSubmit(): void {
+    if (this.isTimeInvalid() || this.getCollisionError() !== null) {
+      return;
+    }
     if (this.appointmentData.patient_id && 
         this.appointmentData.dentist_id && 
         this.appointmentData.fecha && 
