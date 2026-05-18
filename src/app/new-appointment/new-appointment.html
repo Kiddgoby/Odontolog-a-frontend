@@ -13,6 +13,10 @@
             {{ patient.firstName }} {{ patient.lastName }}
           </option>
         </select>
+        <div *ngIf="hasSelectedPatientAllergies()" class="patient-allergy-alert">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Atenció: Pacient de Risc (Infecciós / Al·lèrgies). Cita programada a última hora automàticament.</span>
+        </div>
       </div>
 
       <div class="form-row">
@@ -44,6 +48,15 @@
         <div class="form-group">
           <label for="hora">Hora</label>
           <input type="time" id="hora" name="hora" [(ngModel)]="appointmentData.hora" required>
+          <div *ngIf="isTimeInvalid()" class="time-warning-message">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span *ngIf="isAfterClosingTime()">L'última cita ha de començar abans de les 20:00 (la clínica tanca a les 20:00).</span>
+            <span *ngIf="!isAfterClosingTime() && hasSelectedPatientAllergies()">Els pacients amb al·lèrgies s'han de programar a l'última hora de la jornada (19:00) per desinfecció.</span>
+          </div>
+          <div *ngIf="getCollisionError()" class="time-warning-message collision-error">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <span>{{ getCollisionError() }}</span>
+          </div>
         </div>
       </div>
 
@@ -59,7 +72,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn-secondary" (click)="onCancel()">Cancel·lar</button>
-      <button type="submit" class="btn-primary" [disabled]="!appointmentForm.form.valid">Crear cita</button>
+      <button type="submit" class="btn-primary" [disabled]="!appointmentForm.form.valid || isTimeInvalid() || getCollisionError() !== null">Crear cita</button>
     </div>
   </form>
 </div>

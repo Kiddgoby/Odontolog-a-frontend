@@ -41,11 +41,15 @@
                         <div *ngFor="let app of day.appointments" class="timetable-appointment"
                             [class.status-confirmada]="app.estado === 'confirmada'"
                             [class.status-pendiente]="app.estado === 'pendiente'"
+                            [class.has-allergy]="app.has_allergies"
                             [style.top]="getAppointmentTop(app.hora)">
                             <div class="app-content">
                                 <div class="app-header">
                                     <span class="app-time"><i class="fa-regular fa-clock"></i> {{ app.hora }}</span>
-                                    <span class="app-patient">{{ app.paciente }}</span>
+                                    <span class="app-patient">
+                                        <i class="fa-solid fa-triangle-exclamation" *ngIf="app.has_allergies" [title]="'Al·lèrgies: ' + app.medication_allergies"></i>
+                                        {{ app.paciente }}
+                                    </span>
                                 </div>
                                 <div class="app-body">
                                     <span class="app-treatment">{{ app.tratamiento }}</span>
